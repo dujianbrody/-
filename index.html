@@ -378,10 +378,10 @@ header .en-sub{font-size:clamp(.9rem,2.2vw,1.15rem);color:var(--accent);
 ════════════════════════════════════ -->
 <script>
 const MEMBERS={
-  cwf:{name:'迟文峰',color:'var(--cwf)',img:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300',subtitle:'连续两届冠军 · 当前积分王'},
-  ztq:{name:'朱天祺',color:'var(--ztq)',img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300',subtitle:'稳健型选手 · 亚殿交替'},
-  ch: {name:'崔航',  color:'var(--ch)', img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=300',subtitle:'首届冠军 · 季军专业户'},
-  dj: {name:'杜健',  color:'var(--dj)', img:'https://images.unsplash.com/photo-1628157582853-a796fa650a6a?auto=format&fit=crop&q=80&w=300',subtitle:'第二届黑马 · 高峰低谷并存'}
+  cwf:{name:'迟文峰',color:'var(--cwf)',img:'https://pic1.imgdb.cn/item/6a0ab51dfebbe1263e6e755f.jpg',subtitle:'连续两届冠军 · 当前积分王'},
+  ztq:{name:'朱天祺',color:'var(--ztq)',img:'https://pic1.imgdb.cn/item/6a0ac0f1febbe1263e6ea6be.jpg',subtitle:'稳健型选手 · 亚殿交替'},
+  ch: {name:'崔航',  color:'var(--ch)', img:'https://pic1.imgdb.cn/item/6a0ab523febbe1263e6e7560.jpg',subtitle:'首届冠军 · 季军专业户'},
+  dj: {name:'杜健',  color:'var(--dj)', img:'https://pic1.imgdb.cn/item/6a0abcb4febbe1263e6ea55b.jpg',subtitle:'第二届黑马 · 高峰低谷并存'}
 };
 const MATCHES=[
   {edition:1,date:'2025年11月23日',venue:'M台球会',host:'朱天祺',dinner:'哈埠小馆',
@@ -397,23 +397,32 @@ const MATCHES=[
    teamA:['cwf','ztq'],teamB:['ch','dj'],winner:'A',
    ranks:{cwf:1,ztq:2,ch:3,dj:4}},
 ];
+// 第三届占位SVG（内嵌，无需图床）
+const SVG3 = 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600">
+  <rect width="900" height="600" fill="#09100c"/>
+  <rect x="1" y="1" width="898" height="598" fill="none" stroke="#dfb76c" stroke-width="2" stroke-dasharray="12,6" rx="8"/>
+  <text x="450" y="200" text-anchor="middle" font-family="serif" font-size="90" fill="#dfb76c">📷</text>
+  <text x="450" y="300" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="#ffffff">手速不够，照片没留</text>
+  <text x="450" y="358" text-anchor="middle" font-family="sans-serif" font-size="22" fill="#62776c">打球太投入，忘记拍照了……</text>
+  <text x="450" y="410" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#39ff14">下届务必记录！</text>
+  <text x="450" y="560" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#3a4a40">第三届大师赛 · 2026年03月21日</text>
+</svg>`);
+
 const PHOTOS={
   1:[
-    {src:'https://images.unsplash.com/photo-1544698310-74ea9d1c8258?auto=format&fit=crop&q=80&w=900',caption:'首届开赛'},
-    {src:'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=900',caption:'赛后合影'},
-    {src:'https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?auto=format&fit=crop&q=80&w=900',caption:'激战时刻'},
+    {src:'https://pic1.imgdb.cn/item/6a0abcb4febbe1263e6ea55a.jpg',caption:'第一届留影'},
+    {src:'https://pic1.imgdb.cn/item/6a0abcb4febbe1263e6ea55c.jpg',caption:'赛后合影'},
+    {src:'https://pic1.imgdb.cn/item/6a0abcb4febbe1263e6ea55e.jpg',caption:'精彩瞬间'},
   ],
   2:[
-    {src:'https://images.unsplash.com/photo-1609141700192-23f0fe543e5c?auto=format&fit=crop&q=80&w=900',caption:'杜健奇袭封王'},
-    {src:'https://images.unsplash.com/photo-1571931802340-e17578c773c3?auto=format&fit=crop&q=80&w=900',caption:'赛后聚餐'},
+    {src:'https://pic1.imgdb.cn/item/6a0abcb4febbe1263e6ea55d.jpg',caption:'第二届留影'},
   ],
   3:[
-    {src:'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=900',caption:'文峰登顶'},
-    {src:'https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&q=80&w=900',caption:'颁奖仪式'},
+    {src:SVG3,caption:'手速不够，照片没留 📷'},
   ],
   4:[
-    {src:'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&q=80&w=900',caption:'卫冕之战'},
-    {src:'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&q=80&w=900',caption:'举杯庆功'},
+    {src:'https://pic1.imgdb.cn/item/6a0ac033febbe1263e6ea69c.jpg',caption:'第四届留影'},
+    {src:'https://pic1.imgdb.cn/item/6a0abfe1febbe1263e6ea680.jpg',caption:'赛后欢庆'},
   ],
 };
 </script>
