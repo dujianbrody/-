@@ -2,45 +2,65 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>台球会：四杰争霸传奇</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Noto+Sans+SC:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#030705;--card:#09100c;--border:rgba(223,183,108,.15);
-  --accent:#dfb76c;--glow:#39ff14;
-  --txt:#e2e8f0;--muted:#62776c;
+  --accent:#dfb76c;--glow:#39ff14;--txt:#e2e8f0;--muted:#62776c;
   --cwf:#ff4757;--ztq:#00ea6f;--ch:#1e90ff;--dj:#ffa502;
+  --nav-h:56px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--txt);font-family:'Noto Sans SC',sans-serif;
   background-image:radial-gradient(circle at 50% 10%,#0c1f17,#030705 70%);
-  padding:20px 14px 60px}
+  padding:20px 14px 80px;overflow-x:hidden}
+@media(max-width:768px){body{padding-bottom:calc(var(--nav-h)+20px)}}
 
-/* ─── HEADER ─── */
+/* ── PARTICLES ── */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.particle{position:absolute;border-radius:50%;background:rgba(223,183,108,.15);
+  animation:floatUp linear infinite}
+@keyframes floatUp{
+  0%{transform:translateY(100vh) scale(0);opacity:0}
+  10%{opacity:1}90%{opacity:.25}
+  100%{transform:translateY(-40px) scale(1);opacity:0}
+}
+
+/* ── BOTTOM NAV (mobile) ── */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);
+  background:rgba(3,7,5,.97);border-top:1px solid rgba(223,183,108,.12);
+  z-index:800;backdrop-filter:blur(16px)}
+@media(max-width:768px){.bottom-nav{display:flex}}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;cursor:pointer;transition:all .2s;color:var(--muted);border:none;background:none;padding:6px 0}
+.nav-item.active{color:var(--accent)}
+.nav-item.active .nav-icon{transform:scale(1.18)}
+.nav-icon{font-size:1.25rem;line-height:1;transition:transform .2s}
+.nav-label{font-size:.55rem;font-weight:700;letter-spacing:.3px}
+
+/* ── HEADER ── */
 header{max-width:1300px;margin:0 auto 24px;border-bottom:1px solid rgba(255,255,255,.05);
-  padding-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  padding-bottom:14px;display:flex;justify-content:space-between;align-items:center;
+  gap:12px;flex-wrap:wrap;position:relative;z-index:1}
 .header-left{flex:1;min-width:0}
 header h1{font-size:clamp(1.25rem,4vw,2.2rem);color:var(--accent);letter-spacing:1.5px;
   font-weight:700;text-shadow:0 0 25px rgba(223,183,108,.3);line-height:1.2}
-/* ★ fix7: 英文副标题更大更亮 */
 header .en-sub{font-size:clamp(.9rem,2.2vw,1.15rem);color:var(--accent);
   margin-top:6px;font-weight:500;letter-spacing:.5px;opacity:.85}
-/* ★ fix7: 手机端按钮始终在右 */
 .rule-btn{background:linear-gradient(135deg,#11281e,#09100c);border:1px solid var(--accent);
   color:var(--accent);padding:9px 14px;border-radius:6px;cursor:pointer;
   display:flex;flex-direction:column;align-items:center;gap:3px;transition:all .3s;
-  white-space:nowrap;box-shadow:0 0 10px rgba(223,183,108,.1);flex-shrink:0;
-  margin-left:auto}
+  white-space:nowrap;box-shadow:0 0 10px rgba(223,183,108,.1);flex-shrink:0;margin-left:auto}
 .rule-btn .zh{font-size:.8rem;font-weight:700}
 .rule-btn .en{font-size:.58rem;opacity:.7}
 .rule-btn:hover{background:var(--accent);color:#000}
 
-/* ─── AVATARS ─── */
-/* ★ fix6+7: 固定4列，头像均匀排列 */
+/* ── AVATARS ── */
 .avatar-grid{display:grid;grid-template-columns:repeat(4,1fr);
-  gap:clamp(8px,3vw,36px);max-width:680px;margin:0 auto 28px}
+  gap:clamp(8px,3vw,36px);max-width:680px;margin:0 auto 20px;position:relative;z-index:1}
 .avatar-card{display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .3s}
 .avatar-ring{width:clamp(64px,15vw,118px);height:clamp(64px,15vw,118px);
   border-radius:50%;padding:4px;background:rgba(255,255,255,.03);
@@ -52,13 +72,34 @@ header .en-sub{font-size:clamp(.9rem,2.2vw,1.15rem);color:var(--accent);
   display:flex;align-items:center;justify-content:center;font-size:.72rem;border:2px solid #000}
 .avatar-name{margin-top:8px;font-size:clamp(.78rem,2.5vw,1.05rem);font-weight:700;
   color:var(--accent);letter-spacing:.5px;text-align:center}
-/* ★ fix6: 星星只显示金色，几个冠军几颗星，0冠不显示 */
 .avatar-stars{margin-top:4px;font-size:.8rem;display:flex;gap:2px;justify-content:center;min-height:1rem}
 .star-gold{color:var(--accent);text-shadow:0 0 6px rgba(223,183,108,.7)}
 .avatar-card:hover .avatar-ring,.avatar-card.active .avatar-ring{
-  transform:scale(1.07);border-color:var(--glow);box-shadow:0 0 25px var(--glow),inset 0 0 15px var(--glow)}
+  transform:scale(1.07);border-color:var(--glow);
+  box-shadow:0 0 25px var(--glow),inset 0 0 15px var(--glow)}
 
-/* ─── DRAWER ─── */
+/* ── DRAW LOTS ── */
+.draw-wrap{max-width:680px;margin:0 auto 28px;text-align:center;position:relative;z-index:1}
+.draw-btn{background:linear-gradient(135deg,#0e2017,#162b1c);border:1px solid var(--glow);
+  color:var(--glow);padding:10px 28px;border-radius:8px;cursor:pointer;font-size:.88rem;
+  font-weight:700;letter-spacing:1px;transition:all .3s;
+  box-shadow:0 0 16px rgba(57,255,20,.15);display:inline-flex;align-items:center;gap:8px}
+.draw-btn:hover{background:var(--glow);color:#000;box-shadow:0 0 30px rgba(57,255,20,.4)}
+.draw-result{margin-top:14px;display:none;background:rgba(255,255,255,.02);
+  border:1px solid rgba(57,255,20,.2);border-radius:10px;padding:14px;
+  animation:popIn .4s cubic-bezier(.175,.885,.32,1.275)}
+.draw-result.show{display:block}
+@keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+.draw-teams{display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap}
+.draw-team{background:rgba(255,255,255,.03);border-radius:8px;padding:10px 20px;
+  border:1px solid rgba(255,255,255,.08)}
+.draw-team-label{font-size:.65rem;color:var(--muted);margin-bottom:6px;letter-spacing:1px;text-align:center}
+.draw-team-names{display:flex;flex-direction:column;gap:4px;align-items:center}
+.draw-name{font-size:.92rem;font-weight:700}
+.draw-vs{font-family:'Oswald',sans-serif;font-size:1rem;color:var(--accent);font-weight:700}
+.draw-hint{font-size:.62rem;color:var(--muted);margin-top:8px}
+
+/* ── DRAWER ── */
 .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0);z-index:500;
   pointer-events:none;transition:background .4s}
 .drawer-overlay.open{background:rgba(0,0,0,.65);pointer-events:auto;backdrop-filter:blur(4px)}
@@ -107,25 +148,78 @@ header .en-sub{font-size:clamp(.9rem,2.2vw,1.15rem);color:var(--accent);
 .d-m-emoji{font-size:1.3rem}
 .d-m-res{font-size:.75rem;font-weight:700;color:#fff;margin-top:3px}
 .d-m-partner{font-size:.6rem;color:var(--muted);margin-top:3px}
+.pk-launch-btn{background:rgba(223,183,108,.08);border:1px solid rgba(223,183,108,.25);
+  color:var(--accent);padding:5px 12px;border-radius:4px;cursor:pointer;
+  font-size:.88rem;font-weight:700;transition:all .2s}
+.pk-launch-btn:hover{background:var(--accent);color:#000}
 
-/* ─── LAYOUT ─── */
-.dashboard{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:7fr 5fr;gap:20px}
+/* ── PK MODAL ── */
+.pk-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;z-index:600;
+  opacity:0;pointer-events:none;transition:opacity .3s;padding:16px}
+.pk-overlay.open{opacity:1;pointer-events:auto}
+.pk-card{background:#0b1410;border:1px solid var(--accent);border-radius:14px;
+  width:100%;max-width:680px;padding:22px;
+  transform:scale(.88);transition:transform .4s cubic-bezier(.175,.885,.32,1.275)}
+.pk-overlay.open .pk-card{transform:scale(1)}
+.pk-head{display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.07)}
+.pk-head-left h3{font-size:1rem;font-weight:700;color:var(--accent)}
+.pk-head-left p{font-size:.7rem;color:var(--muted);margin-top:3px}
+.pk-x-btn{background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer;padding:2px}
+.pk-x-btn:hover{color:var(--accent)}
+.pk-avatars{display:flex;align-items:center;justify-content:center;gap:16px;
+  margin-bottom:18px;flex-wrap:wrap}
+.pk-av{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:all .2s}
+.pk-av img{width:60px;height:60px;border-radius:50%;object-fit:cover;
+  border:2px solid rgba(255,255,255,.12);transition:all .3s}
+.pk-av.sel img{border-color:var(--pc,var(--accent));box-shadow:0 0 14px var(--pc,var(--accent))}
+.pk-av-name{font-size:.76rem;font-weight:700;color:var(--muted);transition:color .2s}
+.pk-av.sel .pk-av-name{color:var(--pc,var(--accent))}
+.pk-vs-txt{font-family:'Oswald',sans-serif;font-size:1.1rem;color:var(--muted);font-weight:700;flex-shrink:0}
+.pk-body{display:none;animation:fadeSlideUp .35s ease}
+.pk-body.show{display:block}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.pk-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;border-radius:8px;overflow:hidden;
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05)}
+.pk-col{display:flex;flex-direction:column}
+.pk-col-mid{display:flex;flex-direction:column;background:rgba(0,0,0,.2)}
+.pk-cell{padding:0 10px;text-align:center;border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:.82rem;font-family:'Oswald',sans-serif;font-weight:700;
+  min-height:40px;display:flex;align-items:center;justify-content:center}
+.pk-cell:last-child{border-bottom:none}
+.pk-cell.win{color:var(--glow);background:rgba(57,255,20,.05)}
+.pk-cell.lose{color:var(--muted)}
+.pk-cell.draw{color:var(--accent)}
+.pk-cell-lbl{padding:0 6px;text-align:center;border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:.65rem;color:var(--muted);min-height:40px;display:flex;align-items:center;justify-content:center}
+.pk-cell-lbl:last-child{border-bottom:none}
+/* PK 组队关系标签 */
+.pk-bond{margin-top:12px;padding:10px 14px;border-radius:8px;text-align:center;
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06)}
+.pk-bond-badge{display:inline-block;font-size:.82rem;font-weight:700;padding:3px 12px;
+  border-radius:20px;margin-bottom:6px}
+.pk-bond-detail{font-size:.72rem;color:var(--muted);line-height:1.5}
+
+/* ── LAYOUT ── */
+.dashboard{max-width:1300px;margin:0 auto;display:grid;
+  grid-template-columns:7fr 5fr;gap:20px;position:relative;z-index:1}
 @media(max-width:960px){.dashboard{grid-template-columns:1fr}}
 .left-col{display:flex;flex-direction:column;gap:20px}
-
-/* ★ fix1: 三栏等宽，内容撑满不留白 */
 .bottom-trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:stretch}
 @media(max-width:800px){.bottom-trio{grid-template-columns:1fr}}
 .bottom-trio .card{flex:1;display:flex;flex-direction:column}
-
 .card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;
-  box-shadow:0 12px 30px rgba(0,0,0,.6);display:flex;flex-direction:column}
-.c-title{border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:9px;margin-bottom:13px;display:flex;flex-direction:column}
-.c-title .zh{font-size:clamp(.88rem,2.2vw,1rem);color:#fff;font-weight:700;display:flex;align-items:center;gap:8px}
+  box-shadow:0 12px 30px rgba(0,0,0,.6);display:flex;flex-direction:column;
+  position:relative;z-index:1}
+.c-title{border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:9px;
+  margin-bottom:13px;display:flex;flex-direction:column}
+.c-title .zh{font-size:clamp(.88rem,2.2vw,1rem);color:#fff;font-weight:700;
+  display:flex;align-items:center;gap:8px}
 .c-title .zh small{font-size:.72rem;color:var(--muted);font-weight:400}
 .c-title .en{font-size:.68rem;color:var(--muted);margin-top:3px;padding-left:4px}
 
-/* ─── TREND CHART ─── */
+/* ── TREND CHART ── */
 .chart-wrap{width:100%;height:195px}
 .trend-svg{width:100%;height:100%;overflow:visible}
 .g-line{stroke:rgba(255,255,255,.05);stroke-width:1;stroke-dasharray:4}
@@ -139,17 +233,22 @@ header .en-sub{font-size:clamp(.9rem,2.2vw,1.15rem);color:var(--accent);
 .leg-item{display:flex;align-items:center;gap:6px;font-size:.82rem;color:#a0aec0}
 .leg-bar{width:13px;height:4px;border-radius:2px}
 
-/* ─── ★ fix1: 主办柱状图 — 充满卡片高度 ─── */
+/* ── ORGANIZER BARS ── */
 .org-wrap{flex:1;display:flex;flex-direction:column;justify-content:flex-end}
-.org-box{display:flex;justify-content:space-around;align-items:flex-end;flex:1;padding-top:10px;min-height:120px}
+.org-box{display:flex;justify-content:space-around;align-items:flex-end;flex:1;
+  padding-top:10px;min-height:120px}
 .bar-col{display:flex;flex-direction:column;align-items:center;flex:1;max-width:60px}
 .bar-val{font-family:'Oswald',sans-serif;font-size:.8rem;color:var(--accent);margin-bottom:3px}
 .bar-pill{width:28px;background:linear-gradient(to top,#11281e,var(--bc,#10b981));
   border-radius:5px 5px 0 0;transform:scaleY(0);transform-origin:bottom;animation:grow 1s forwards .3s}
 .bar-lbl{font-size:.72rem;color:var(--txt);margin-top:6px;text-align:center}
 @keyframes grow{to{transform:scaleY(1)}}
+.next-host-hint{margin-top:10px;text-align:center;font-size:.7rem;color:var(--muted);
+  padding:6px 10px;background:rgba(57,255,20,.05);border:1px solid rgba(57,255,20,.15);
+  border-radius:6px;line-height:1.5}
+.next-host-hint strong{color:var(--glow);font-size:.78rem}
 
-/* ─── ★ fix1&2: 台费 — 4个环形图 2×2 ─── */
+/* ── PIE 4 ── */
 .pies-4{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1}
 .mini-pie-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;
   background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);
@@ -163,7 +262,7 @@ header .en-sub{font-size:clamp(.9rem,2.2vw,1.15rem);color:var(--accent);
 .mini-pie-name{font-size:.8rem;font-weight:700}
 .mini-pie-detail{font-size:.62rem;color:var(--muted);text-align:center}
 
-/* ─── ★ fix1: 聚餐进度条 — 垂直充满 ─── */
+/* ── DINNER ── */
 .fee-list{display:flex;flex-direction:column;gap:0;flex:1;justify-content:space-around}
 .fee-row{display:flex;flex-direction:column;gap:5px;padding:8px 0;
   border-bottom:1px solid rgba(255,255,255,.03)}
@@ -175,39 +274,131 @@ header .en-sub{font-size:clamp(.9rem,2.2vw,1.15rem);color:var(--accent);
 .bar-track{width:100%;height:7px;background:#121e17;border-radius:3px;overflow:hidden}
 .bar-fill{height:100%;border-radius:3px;transition:width .8s ease}
 
-/* ─── ★ fix2: MATCH TIMELINE ─── */
-.timeline{display:flex;flex-direction:column;gap:10px;height:100%}
-.match-box{background:rgba(255,255,255,.01);border:1px solid rgba(255,255,255,.04);
-  border-radius:8px;padding:12px;flex:1;display:flex;flex-direction:column;gap:8px}
-/* ★ fix2: 日期在标题上方 */
-.match-date-line{font-size:.68rem;color:var(--accent);font-weight:600;letter-spacing:.3px;
-  display:flex;align-items:center;gap:6px}
-.match-title{font-size:.95rem;color:#fff;font-weight:700;margin-bottom:2px}
-.match-info{font-size:.66rem;color:var(--muted);line-height:1.7}
-.match-vs-row{display:flex;align-items:center;justify-content:center;gap:6px;
+/* ── MATCH TIMELINE ── */
+/* PC：撑满右侧列高度，内容紧凑滚动 */
+.timeline-scroll-wrap{
+  flex:1;overflow:hidden;position:relative;min-height:0;
+  mask-image:linear-gradient(transparent 0%,black 5%,black 95%,transparent 100%);
+  -webkit-mask-image:linear-gradient(transparent 0%,black 5%,black 95%,transparent 100%);
+}
+/* 手机：固定高度，约4-5届内容高 */
+@media(max-width:960px){
+  .timeline-scroll-wrap{
+    height:340px;flex:none;
+  }
+}
+.timeline{
+  display:flex;flex-direction:column;gap:6px;
+  animation:scrollUp var(--tl-dur,30s) linear infinite;
+}
+.timeline:hover,.timeline:active{animation-play-state:paused}
+@keyframes scrollUp{
+  0%{transform:translateY(0)}
+  100%{transform:translateY(-50%)}
+}
+/* 分隔符：头尾相接处，明显金色横线 */
+.tl-separator{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 0;flex-shrink:0;
+}
+.tl-sep-line{
+  flex:1;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  box-shadow:0 0 6px rgba(223,183,108,.4);
+}
+.tl-sep-text{
+  font-size:.6rem;color:var(--accent);letter-spacing:2px;
+  white-space:nowrap;opacity:.75;
+}
+.match-box{
+  background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.04);
+  border-radius:7px;padding:9px 11px;display:flex;flex-direction:column;gap:5px;
+  flex-shrink:0;
+}
+.match-date-line{font-size:.63rem;color:var(--accent);font-weight:600;
+  letter-spacing:.3px;display:flex;align-items:center;gap:5px}
+.match-title{font-size:.86rem;color:#fff;font-weight:700}
+.match-info{font-size:.62rem;color:var(--muted);line-height:1.55}
+.match-vs-row{display:flex;align-items:center;justify-content:center;gap:5px;
   background:rgba(0,0,0,.25);border:1px dashed rgba(255,255,255,.07);
-  border-radius:6px;padding:6px 10px;flex-wrap:wrap}
-.vs-team{font-size:.8rem;font-weight:700;color:#e2e8f0;white-space:nowrap}
+  border-radius:5px;padding:4px 8px;flex-wrap:wrap}
+.vs-team{font-size:.76rem;font-weight:700;color:#e2e8f0;white-space:nowrap}
 .vs-winner{color:var(--glow);text-shadow:0 0 8px var(--glow)}
-.vs-x{font-size:.65rem;color:var(--accent);font-family:'Oswald',sans-serif;padding:0 3px}
-.match-ranks-row{display:flex;gap:5px;flex-wrap:wrap}
-.rank-chip{display:flex;align-items:center;gap:3px;font-size:.74rem;padding:3px 8px;
-  border-radius:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+.vs-x{font-size:.6rem;color:var(--accent);font-family:'Oswald',sans-serif;padding:0 3px}
+.match-ranks-row{display:flex;gap:4px;flex-wrap:wrap}
+.rank-chip{display:flex;align-items:center;gap:3px;font-size:.68rem;padding:2px 6px;
+  border-radius:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}
 .rank-chip.winner-chip{background:rgba(57,255,20,.09);border-color:rgba(57,255,20,.28);color:var(--glow)}
-.rank-chip-emoji{font-size:.84rem}
+.rank-chip-emoji{font-size:.78rem}
 .rank-chip-name{font-weight:600}
 
-/* ─── ★ fix3: WINRATE — 两列等高，积分卡片式布局 ─── */
-.wr-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:1300px;margin:20px auto 0;
-  align-items:stretch}
+/* ── 赛程全览弹窗 ── */
+.all-matches-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);
+  z-index:700;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .35s;padding:16px;
+}
+.all-matches-overlay.open{opacity:1;pointer-events:auto}
+.all-matches-panel{
+  background:linear-gradient(160deg,#091410,#060e09);
+  border:1px solid rgba(223,183,108,.25);border-radius:16px;
+  width:100%;max-width:860px;max-height:90vh;overflow-y:auto;
+  padding:24px 20px;
+  transform:scale(.88) translateY(20px);
+  transition:transform .4s cubic-bezier(.175,.885,.32,1.275);
+  box-shadow:0 0 60px rgba(223,183,108,.12),0 0 120px rgba(57,255,20,.05);
+}
+.all-matches-overlay.open .all-matches-panel{transform:scale(1) translateY(0)}
+.am-head{display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.07)}
+.am-title{font-size:1.2rem;font-weight:700;color:var(--accent);
+  display:flex;align-items:center;gap:8px}
+.am-subtitle{font-size:.7rem;color:var(--muted);margin-top:3px}
+.am-close{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.9rem;
+  display:flex;align-items:center;justify-content:center;transition:all .2s}
+.am-close:hover{background:var(--accent);color:#000}
+.am-list{display:flex;flex-direction:column;gap:14px}
+.am-item{
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);
+  border-radius:10px;padding:16px;
+  border-left:3px solid var(--accent);
+  transition:border-color .3s,background .3s;
+}
+.am-item:hover{background:rgba(255,255,255,.04);border-color:rgba(57,255,20,.4)}
+.am-item-head{display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:10px;flex-wrap:wrap;gap:6px}
+.am-edition{font-family:'Oswald',sans-serif;font-size:1.1rem;font-weight:700;color:#fff}
+.am-date-badge{font-size:.68rem;color:var(--accent);background:rgba(223,183,108,.1);
+  border:1px solid rgba(223,183,108,.2);padding:2px 10px;border-radius:12px}
+.am-meta-row{display:flex;gap:14px;font-size:.7rem;color:var(--muted);
+  margin-bottom:10px;flex-wrap:wrap}
+.am-vs-block{display:flex;align-items:center;justify-content:center;gap:10px;
+  background:rgba(0,0,0,.3);border-radius:8px;padding:8px 14px;margin-bottom:10px;flex-wrap:wrap}
+.am-team{font-size:.85rem;font-weight:700}
+.am-vs-badge{font-family:'Oswald',sans-serif;font-size:.8rem;color:var(--accent)}
+.am-ranks{display:flex;gap:6px;flex-wrap:wrap}
+.am-rank-chip{display:flex;align-items:center;gap:4px;font-size:.75rem;padding:3px 10px;
+  border-radius:4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
+.am-rank-chip.winner{background:rgba(57,255,20,.09);border-color:rgba(57,255,20,.3);color:var(--glow)}
+/* 赛程按钮 */
+.tl-view-all-btn{
+  position:absolute;top:0;right:0;
+  background:rgba(223,183,108,.1);border:1px solid rgba(223,183,108,.25);
+  color:var(--accent);padding:4px 10px;border-radius:5px;cursor:pointer;
+  font-size:.68rem;font-weight:700;transition:all .2s;white-space:nowrap;
+}
+.tl-view-all-btn:hover{background:var(--accent);color:#000}
+.tl-title-row{position:relative;padding-right:90px}
+
+/* ── WINRATE ── */
+.wr-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;
+  max-width:1300px;margin:20px auto 0;align-items:stretch;position:relative;z-index:1}
 @media(max-width:700px){.wr-grid{grid-template-columns:1fr}}
 .wr-grid .card{height:100%}
-
 .wr-legend{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
 .wr-leg-item{display:flex;align-items:center;gap:3px;font-size:.66rem;color:var(--muted)}
 .wr-leg-dot{width:7px;height:7px;border-radius:50%}
-
-/* ★ fix3: 积分排行 — 卡片式，每人一行大卡 */
 .wr-cards{display:flex;flex-direction:column;gap:8px;flex:1}
 .wr-card{display:flex;align-items:center;gap:10px;
   background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);
@@ -222,13 +413,13 @@ header .en-sub{font-size:clamp(.9rem,2.2vw,1.15rem);color:var(--accent);
 .wr-card-body{flex:1;min-width:0}
 .wr-card-name{font-size:.9rem;font-weight:700;margin-bottom:4px}
 .wr-bar-bg{width:100%;height:6px;background:#121e17;border-radius:3px;overflow:hidden;margin-bottom:4px}
-.wr-bar-fill{height:100%;border-radius:3px}
+.wr-bar-fill{height:100%;border-radius:3px;width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
 .wr-card-medals{font-size:.68rem;color:var(--muted)}
 .wr-card-right{text-align:right;flex-shrink:0}
 .wr-card-pct{font-family:'Oswald',sans-serif;font-size:1.25rem;font-weight:700;line-height:1}
 .wr-card-pts{font-size:.68rem;color:var(--muted);margin-top:2px}
 
-/* 组队胜率 */
+/* ── TEAM GRID ── */
 .team-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1;align-content:start}
 .team-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);
   border-radius:8px;padding:11px 9px;text-align:center;transition:all .3s}
@@ -248,69 +439,136 @@ header .en-sub{font-size:clamp(.9rem,2.2vw,1.15rem);color:var(--accent);
   color:var(--muted);border:1px solid rgba(255,255,255,.08);border-radius:3px;
   padding:1px 5px;margin-top:3px}
 
-/* ─── ★ fix4: GALLERY ─── */
-.gallery-section{max-width:1300px;margin:20px auto 0}
-.gallery-head{display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:14px;flex-wrap:wrap;gap:8px}
-.gallery-title-row{font-size:.95rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:7px}
-.gallery-tabs{display:flex;gap:7px;flex-wrap:wrap}
-.g-tab{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
-  color:var(--muted);padding:5px 13px;border-radius:20px;cursor:pointer;font-size:.76rem;transition:all .25s}
-.g-tab.active,.g-tab:hover{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700}
+/* ── HORIZONTAL SCROLL SHARED ── */
+.hscroll-section{max-width:1300px;margin:24px auto 0;position:relative;z-index:1}
+.hscroll-head{display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.hscroll-title{font-size:1rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.hscroll-title .sub{font-size:.68rem;color:var(--muted);font-weight:400;margin-left:2px}
+.hscroll-tabs{display:flex;gap:7px;flex-wrap:wrap}
+.h-tab{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+  color:var(--muted);padding:5px 13px;border-radius:20px;cursor:pointer;
+  font-size:.76rem;transition:all .25s;white-space:nowrap}
+.h-tab.active,.h-tab:hover{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700}
+.hscroll-outer{
+  overflow-x:scroll;overflow-y:hidden;
+  padding-bottom:12px;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-x;
+  overscroll-behavior-x:contain;
+  scrollbar-width:thin;scrollbar-color:rgba(223,183,108,.4) #121e17;
+}
+.hscroll-outer::-webkit-scrollbar{height:4px}
+.hscroll-outer::-webkit-scrollbar-track{background:#121e17;border-radius:2px}
+.hscroll-outer::-webkit-scrollbar-thumb{background:rgba(223,183,108,.5);border-radius:2px}
+.hscroll-inner{display:flex;gap:14px;width:max-content;padding:2px 2px 4px}
 
-/* 全部页：每届一个轮播窗口，4列 */
-.gallery-all-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-@media(max-width:800px){.gallery-all-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:500px){.gallery-all-grid{grid-template-columns:repeat(2,1fr)}}
+/* ── CHART LEGEND CLICK ── */
+.leg-clickable{cursor:pointer;border-radius:4px;padding:3px 7px;
+  transition:opacity .3s,background .2s;user-select:none}
+.leg-clickable:hover{background:rgba(255,255,255,.06)}
+.leg-clickable.dimmed{opacity:.2}
+.line-dimmed{opacity:.06}
+.line-active{stroke-width:3.5}
 
-/* 每个轮播窗口 */
-.ed-slider-box{position:relative;border-radius:8px;overflow:hidden;
-  border:1px solid var(--border);cursor:pointer;transition:border-color .3s;aspect-ratio:4/3}
-.ed-slider-box:hover{border-color:var(--accent)}
-.ed-slide{position:absolute;inset:0;transition:opacity .6s ease;opacity:0}
-.ed-slide.active{opacity:1}
-.ed-slide img{width:100%;height:100%;object-fit:cover;display:block}
-.ed-slide-overlay{position:absolute;bottom:0;left:0;right:0;
-  background:linear-gradient(transparent,rgba(0,0,0,.85));padding:20px 10px 10px}
-.ed-edition-badge{position:absolute;top:8px;left:8px;
-  background:rgba(0,0,0,.6);border:1px solid var(--accent);
-  color:var(--accent);font-size:.68rem;font-weight:700;
-  padding:2px 8px;border-radius:4px;backdrop-filter:blur(4px)}
-.ed-caption{font-size:.72rem;font-weight:700;color:#fff}
-.ed-meta{font-size:.58rem;color:rgba(255,255,255,.6);margin-top:2px}
-.ed-dots{position:absolute;bottom:38px;left:50%;transform:translateX(-50%);
-  display:flex;gap:4px}
-.ed-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.3);transition:all .3s}
-.ed-dot.active{background:var(--accent);width:12px;border-radius:3px}
-.ed-zoom-hint{position:absolute;top:8px;right:8px;
-  background:rgba(0,0,0,.5);color:var(--accent);
-  font-size:.62rem;padding:2px 6px;border-radius:4px;opacity:0;transition:opacity .3s}
-.ed-slider-box:hover .ed-zoom-hint{opacity:1}
+/* ── ALBUM CARDS ── */
+.album-card{width:clamp(240px,38vw,320px);background:var(--card);
+  border:1px solid var(--border);border-radius:10px;overflow:hidden;
+  scroll-snap-align:start;flex-shrink:0;transition:all .3s;cursor:pointer}
+.album-card:hover{border-color:var(--accent);transform:translateY(-3px);
+  box-shadow:0 12px 28px rgba(0,0,0,.6)}
+.album-slider{position:relative;aspect-ratio:16/9;overflow:hidden}
+.a-slide{position:absolute;inset:0;opacity:0;transition:opacity .55s ease}
+.a-slide.active{opacity:1}
+.a-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.a-ov{position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(0,0,0,.82));padding:18px 10px 10px}
+.a-caption{font-size:.72rem;font-weight:700;color:#fff}
+.a-badge{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.6);
+  border:1px solid var(--accent);color:var(--accent);font-size:.65rem;font-weight:700;
+  padding:2px 8px;border-radius:4px}
+.a-dots{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);display:flex;gap:4px}
+.a-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.3);
+  cursor:pointer;transition:all .25s}
+.a-dot.active{background:var(--accent);width:12px;border-radius:3px}
+.a-zoom{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.5);
+  color:var(--accent);font-size:.6rem;padding:2px 7px;border-radius:4px;
+  opacity:0;transition:opacity .3s}
+.album-card:hover .a-zoom{opacity:1}
+.album-footer{padding:9px 12px;display:flex;justify-content:space-between;align-items:center}
+.album-footer-meta{font-size:.7rem;color:var(--muted);line-height:1.5}
+.album-footer-cnt{font-size:.72rem;color:var(--accent);font-family:'Oswald',sans-serif;font-weight:700}
 
-/* 单届大图模式：横向平铺 */
-.gallery-single{display:flex;flex-direction:column;gap:12px}
-.single-slider-wrap{position:relative;overflow:hidden;border-radius:8px;border:1px solid var(--border)}
-.single-track{display:flex;transition:transform .5s cubic-bezier(.4,0,.2,1)}
-.single-slide{min-width:100%;aspect-ratio:16/9;position:relative;cursor:pointer;flex-shrink:0}
-.single-slide img{width:100%;height:100%;object-fit:cover;opacity:.75;transition:opacity .3s;display:block}
-.single-slide:hover img{opacity:.95}
-.single-info{position:absolute;bottom:0;left:0;right:0;
-  background:linear-gradient(transparent,rgba(0,0,0,.88));padding:24px 14px 14px}
-.single-caption{font-size:.82rem;font-weight:700;color:#fff}
-.single-meta{font-size:.64rem;color:var(--muted);margin-top:3px;display:flex;gap:10px}
-.single-arrows{position:absolute;top:50%;transform:translateY(-50%);
-  width:100%;display:flex;justify-content:space-between;padding:0 10px;pointer-events:none}
-.s-arrow{width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.55);
-  border:1px solid rgba(255,255,255,.15);color:#fff;display:flex;align-items:center;
-  justify-content:center;font-size:.85rem;cursor:pointer;pointer-events:auto;transition:all .2s}
-.s-arrow:hover{background:var(--accent);color:#000;border-color:var(--accent)}
-.single-dots{display:flex;justify-content:center;gap:6px;padding:8px 0}
-.s-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);
-  cursor:pointer;transition:all .3s}
-.s-dot.active{background:var(--accent);width:16px;border-radius:4px}
-.single-thumbs{display:grid;gap:8px}
+/* ── VIDEO FILTER BAR ── */
+.vfilter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.vf-label{font-size:.68rem;color:var(--muted)}
+.vf-chip{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+  color:var(--muted);padding:4px 11px;border-radius:14px;cursor:pointer;
+  font-size:.72rem;transition:all .2s;user-select:none;white-space:nowrap}
+.vf-chip:hover{border-color:var(--accent);color:var(--accent)}
+.vf-chip.on{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700}
+.vf-chip.on.fc-cwf{background:var(--cwf);border-color:var(--cwf);color:#fff}
+.vf-chip.on.fc-ztq{background:var(--ztq);border-color:var(--ztq);color:#000}
+.vf-chip.on.fc-ch{background:var(--ch);border-color:var(--ch);color:#fff}
+.vf-chip.on.fc-dj{background:var(--dj);border-color:var(--dj);color:#000}
+.vf-div{width:1px;height:16px;background:rgba(255,255,255,.1);flex-shrink:0}
+.vf-reset{color:var(--accent);border-color:rgba(223,183,108,.3)}
 
-/* ─── LIGHTBOX ─── */
+/* ── VIDEO CARDS ── */
+.video-card{width:clamp(240px,38vw,320px);background:var(--card);
+  border:1px solid var(--border);border-radius:10px;overflow:hidden;
+  scroll-snap-align:start;flex-shrink:0;transition:all .3s;cursor:pointer}
+.video-card:hover{border-color:var(--accent);transform:translateY(-3px);
+  box-shadow:0 12px 28px rgba(0,0,0,.6)}
+.video-card.no-bv{cursor:default}
+.video-card.no-bv:hover{transform:none;border-color:var(--border)}
+.v-thumb{position:relative;aspect-ratio:16/9;background:#0c160e;overflow:hidden}
+.v-placeholder{width:100%;height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:6px;
+  background:linear-gradient(135deg,#0d1a0f,#090f0a)}
+.v-placeholder-icon{font-size:2rem;opacity:.5}
+.v-placeholder-txt{font-size:.68rem;color:var(--muted);text-align:center;padding:0 10px}
+.v-play-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.35);transition:background .25s}
+.video-card:hover .v-play-ov{background:rgba(0,0,0,.15)}
+.v-play-circle{width:44px;height:44px;border-radius:50%;background:rgba(223,183,108,.9);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+  transition:transform .2s;box-shadow:0 0 18px rgba(223,183,108,.35)}
+.video-card:hover .v-play-circle{transform:scale(1.1)}
+.v-info{padding:10px 12px}
+.v-title{font-size:.84rem;font-weight:700;color:#fff;margin-bottom:5px;line-height:1.4}
+.v-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px}
+.vtag{font-size:.6rem;padding:2px 7px;border-radius:10px;font-weight:700;
+  background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.08)}
+.vtag.tc-cwf{background:rgba(255,71,87,.12);color:var(--cwf);border-color:rgba(255,71,87,.25)}
+.vtag.tc-ztq{background:rgba(0,234,111,.1);color:var(--ztq);border-color:rgba(0,234,111,.2)}
+.vtag.tc-ch{background:rgba(30,144,255,.12);color:var(--ch);border-color:rgba(30,144,255,.25)}
+.vtag.tc-dj{background:rgba(255,165,2,.12);color:var(--dj);border-color:rgba(255,165,2,.25)}
+.vtag.tc-sk{background:rgba(223,183,108,.1);color:var(--accent);border-color:rgba(223,183,108,.2)}
+.v-meta{font-size:.62rem;color:var(--muted)}
+.v-empty{text-align:center;padding:38px 20px;color:var(--muted);
+  background:var(--card);border:1px dashed rgba(255,255,255,.08);
+  border-radius:8px;width:300px;flex-shrink:0}
+.v-empty-icon{font-size:2rem;margin-bottom:8px;opacity:.4}
+.v-empty-txt{font-size:.78rem}
+
+/* ── VIDEO MASK ── */
+.vmask{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:700;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  opacity:0;pointer-events:none;transition:opacity .3s;padding:16px}
+.vmask.open{opacity:1;pointer-events:auto}
+.vmask-inner{width:100%;max-width:920px}
+.vmask-frame{position:relative;width:100%;aspect-ratio:16/9;
+  border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.1)}
+.vmask-frame iframe{width:100%;height:100%;border:none}
+.vmask-title{margin-top:12px;font-size:.9rem;font-weight:700;color:#fff;text-align:center}
+.vmask-close{position:fixed;top:14px;right:16px;background:rgba(255,255,255,.08);
+  border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;
+  font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.vmask-close:hover{background:var(--accent);color:#000}
+
+/* ── LIGHTBOX ── */
 .lb{position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:900;
   display:flex;align-items:center;justify-content:center;flex-direction:column;
   opacity:0;pointer-events:none;transition:opacity .3s}
@@ -319,9 +577,8 @@ header .en-sub{font-size:clamp(.9rem,2.2vw,1.15rem);color:var(--accent);
   border-radius:6px;border:1px solid rgba(255,255,255,.1);display:block}
 .lb-meta{margin-top:12px;text-align:center}
 .lb-title{font-size:.92rem;font-weight:700;color:#fff}
-.lb-sub{font-size:.72rem;color:var(--muted);margin-top:4px;display:flex;gap:12px;
-  justify-content:center;flex-wrap:wrap}
-.lb-sub span{display:flex;align-items:center;gap:4px}
+.lb-sub{font-size:.72rem;color:var(--muted);margin-top:4px;display:flex;
+  gap:12px;justify-content:center;flex-wrap:wrap}
 .lb-close{position:fixed;top:14px;right:16px;background:rgba(255,255,255,.08);border:none;
   color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1rem;
   display:flex;align-items:center;justify-content:center;transition:all .2s}
@@ -334,7 +591,7 @@ header .en-sub{font-size:clamp(.9rem,2.2vw,1.15rem);color:var(--accent);
 .lb-cnt{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
   font-size:.72rem;color:var(--muted);font-family:'Oswald',sans-serif}
 
-/* ─── MODAL ─── */
+/* ── MODAL ── */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);
   display:flex;align-items:center;justify-content:center;z-index:1000;
   opacity:0;pointer-events:none;transition:all .4s;padding:16px}
@@ -369,12 +626,14 @@ header .en-sub{font-size:clamp(.9rem,2.2vw,1.15rem);color:var(--accent);
 </style>
 </head>
 <body>
+<div id="particles"></div>
 
 <!-- ════════════════════════════════════
-  ★ 数据区 — 以后只改这里 ★
+  ★ 数据区 — 只改这里 ★
   新增比赛：MATCHES末尾追加
-  新增照片：PHOTOS对应届追加{src,caption}
-  换头像  ：MEMBERS里改img链接
+  新增照片：PHOTOS对应届追加 {src,caption}
+  新增视频：VIDEOS末尾追加对象
+  换头像  ：MEMBERS里改 img 链接
 ════════════════════════════════════ -->
 <script>
 const MEMBERS={
@@ -385,50 +644,50 @@ const MEMBERS={
 };
 const MATCHES=[
   {edition:1,date:'2025年11月23日',venue:'M台球会',host:'朱天祺',dinner:'哈埠小馆',
-   teamA:['cwf','dj'],teamB:['ztq','ch'],winner:'B',
-   ranks:{cwf:3,ztq:2,ch:1,dj:4}},
+   teamA:['cwf','dj'],teamB:['ztq','ch'],winner:'B',ranks:{cwf:3,ztq:2,ch:1,dj:4}},
   {edition:2,date:'2026年01月17日',venue:'M台球会',host:'崔航',dinner:'种花家烧烤',
-   teamA:['cwf','dj'],teamB:['ztq','ch'],winner:'A',
-   ranks:{cwf:2,ztq:4,ch:3,dj:1}},
+   teamA:['cwf','dj'],teamB:['ztq','ch'],winner:'A',ranks:{cwf:2,ztq:4,ch:3,dj:1}},
   {edition:3,date:'2026年03月21日',venue:'M台球会',host:'杜健',dinner:'炭蜜·亮子炖大公鸡',
-   teamA:['cwf','dj'],teamB:['ztq','ch'],winner:'A',
-   ranks:{cwf:1,ztq:4,ch:3,dj:2}},
+   teamA:['cwf','dj'],teamB:['ztq','ch'],winner:'A',ranks:{cwf:1,ztq:4,ch:3,dj:2}},
   {edition:4,date:'2026年05月16日',venue:'M台球会',host:'迟文峰',dinner:'渔乡人家',
-   teamA:['cwf','ztq'],teamB:['ch','dj'],winner:'A',
-   ranks:{cwf:1,ztq:2,ch:3,dj:4}},
+   teamA:['cwf','ztq'],teamB:['ch','dj'],winner:'A',ranks:{cwf:1,ztq:2,ch:3,dj:4}},
 ];
-// 第三届占位SVG（内嵌，无需图床）
-const SVG3 = 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600">
-  <rect width="900" height="600" fill="#09100c"/>
-  <rect x="1" y="1" width="898" height="598" fill="none" stroke="#dfb76c" stroke-width="2" stroke-dasharray="12,6" rx="8"/>
-  <text x="450" y="200" text-anchor="middle" font-family="serif" font-size="90" fill="#dfb76c">📷</text>
-  <text x="450" y="300" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="#ffffff">手速不够，照片没留</text>
-  <text x="450" y="358" text-anchor="middle" font-family="sans-serif" font-size="22" fill="#62776c">打球太投入，忘记拍照了……</text>
-  <text x="450" y="410" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#39ff14">下届务必记录！</text>
-  <text x="450" y="560" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#3a4a40">第三届大师赛 · 2026年03月21日</text>
-</svg>`);
-
+const SVG3='data:image/svg+xml;utf8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600"><rect width="900" height="600" fill="#09100c"/><rect x="1" y="1" width="898" height="598" fill="none" stroke="#dfb76c" stroke-width="2" stroke-dasharray="12,6" rx="8"/><text x="450" y="200" text-anchor="middle" font-family="serif" font-size="90" fill="#dfb76c">📷</text><text x="450" y="300" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="#ffffff">手速不够，照片没留</text><text x="450" y="358" text-anchor="middle" font-family="sans-serif" font-size="22" fill="#62776c">打球太投入，忘记拍照了……</text><text x="450" y="410" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#39ff14">下届务必记录！</text><text x="450" y="560" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#3a4a40">第三届大师赛 · 2026年03月21日</text></svg>`);
 const PHOTOS={
   1:[
     {src:'https://pic1.imgdb.cn/item/6a0abcb4febbe1263e6ea55a.jpg',caption:'第一届留影'},
     {src:'https://pic1.imgdb.cn/item/6a0abcb4febbe1263e6ea55c.jpg',caption:'赛后合影'},
     {src:'https://pic1.imgdb.cn/item/6a0abcb4febbe1263e6ea55e.jpg',caption:'精彩瞬间'},
   ],
-  2:[
-    {src:'https://pic1.imgdb.cn/item/6a0abcb4febbe1263e6ea55d.jpg',caption:'第二届留影'},
-  ],
-  3:[
-    {src:SVG3,caption:'手速不够，照片没留 📷'},
-  ],
+  2:[{src:'https://pic1.imgdb.cn/item/6a0abcb4febbe1263e6ea55d.jpg',caption:'第二届留影'}],
+  3:[{src:SVG3,caption:'手速不够，照片没留 📷'}],
   4:[
     {src:'https://pic1.imgdb.cn/item/6a0ac033febbe1263e6ea69c.jpg',caption:'第四届留影'},
     {src:'https://pic1.imgdb.cn/item/6a0abfe1febbe1263e6ea680.jpg',caption:'赛后欢庆'},
   ],
 };
+// ── 视频 ──────────────────────────────────────
+// bvid: B站BV号，留空=待上传
+// members: ['cwf','ztq','ch','dj'] 任意组合
+// skills: '炸清'|'接清'|'神仙球'|'大自然杆法'|'精彩对决'|'关键球'
+const VIDEOS=[
+  {bvid:'',title:'崔航封王关键局',edition:1,date:'2025年11月23日',members:['ch'],skills:['神仙球','关键球']},
+  {bvid:'',title:'杜健炸清绝杀',edition:2,date:'2026年01月17日',members:['dj'],skills:['炸清']},
+  {bvid:'',title:'迟文峰大自然杆法',edition:3,date:'2026年03月21日',members:['cwf'],skills:['大自然杆法','神仙球']},
+  {bvid:'',title:'迟&朱精彩对决',edition:4,date:'2026年05月16日',members:['cwf','ztq'],skills:['精彩对决','接清']},
+];
 </script>
 <!-- ════════ 数据区结束 ════════ -->
 
-<header>
+<!-- 手机底部导航 -->
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="navTo('top',this)"><span class="nav-icon">🏠</span><span class="nav-label">主页</span></button>
+  <button class="nav-item" onclick="navTo('sec-data',this)"><span class="nav-icon">📊</span><span class="nav-label">数据</span></button>
+  <button class="nav-item" onclick="navTo('sec-video',this)"><span class="nav-icon">🎬</span><span class="nav-label">视频</span></button>
+  <button class="nav-item" onclick="navTo('sec-gallery',this)"><span class="nav-icon">📸</span><span class="nav-label">相册</span></button>
+</nav>
+
+<header id="top">
   <div class="header-left">
     <h1>台球会：四杰争霸传奇与情谊编年史</h1>
     <div class="en-sub">Billiards Club · Legend & Brotherhood Chronicles</div>
@@ -439,18 +698,26 @@ const PHOTOS={
   </button>
 </header>
 
+<!-- 头像 -->
 <div class="avatar-grid" id="avatarGrid"></div>
 
+<!-- 抽签模拟器 -->
+<div class="draw-wrap">
+  <button class="draw-btn" onclick="drawLots()">🎲 模拟本届抽签分组</button>
+  <div class="draw-result" id="drawResult">
+    <div class="draw-teams" id="drawTeams"></div>
+    <div class="draw-hint">随机模拟 · 仅供娱乐参考</div>
+  </div>
+</div>
+
+<!-- 抽屉 -->
 <div class="drawer-overlay" id="dOverlay" onclick="closeProfile()"></div>
 <div class="drawer" id="drawer">
   <div class="drawer-handle"></div>
   <div class="drawer-inner">
     <div class="drawer-head">
       <img class="d-avatar" id="dAvatar" src="" alt="">
-      <div class="d-name-block">
-        <div class="d-name" id="dName"></div>
-        <div class="d-sub" id="dSub"></div>
-      </div>
+      <div class="d-name-block"><div class="d-name" id="dName"></div><div class="d-sub" id="dSub"></div></div>
       <button class="d-close" onclick="closeProfile()">✕</button>
     </div>
     <div class="d-stats">
@@ -458,121 +725,179 @@ const PHOTOS={
       <div class="d-stat"><div class="d-num" id="ds-tw"></div><div class="d-lbl">🤝 团队赛胜场数</div></div>
       <div class="d-stat"><div class="d-num" id="ds-wr"></div><div class="d-lbl">📊 团队胜率</div></div>
       <div class="d-stat"><div class="d-num" id="ds-pts"></div><div class="d-lbl">⭐ 积分总计</div></div>
+      <div class="d-stat" style="grid-column:1/-1;background:rgba(223,183,108,.04);border-color:rgba(223,183,108,.15)">
+        <div class="d-num" id="ds-pct" style="font-size:1.4rem"></div>
+        <div class="d-lbl">🏅 综合积分百分比（积分 ÷ 满分）</div>
+      </div>
     </div>
-    <div class="d-hist-title">历届战绩详情</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+      <div class="d-hist-title" style="margin-bottom:0">历届战绩详情</div>
+      <button class="pk-launch-btn" onclick="openPK(currentProfileKey)">⚔️ 发起PK对比</button>
+    </div>
     <div class="d-matches" id="dMatches"></div>
   </div>
 </div>
 
-<div class="dashboard">
-  <div class="left-col">
-    <!-- 走势图 -->
+<!-- PK弹窗 -->
+<div class="pk-overlay" id="pkOverlay" onclick="closePK()">
+  <div class="pk-card" onclick="event.stopPropagation()">
+    <div class="pk-head">
+      <div class="pk-head-left"><h3>⚔️ 选手数据对比 PK</h3><p>选择另一名选手进行对比</p></div>
+      <button class="pk-x-btn" onclick="closePK()">✕</button>
+    </div>
+    <div class="pk-avatars" id="pkAvatars"></div>
+    <div class="pk-body" id="pkBody"></div>
+  </div>
+</div>
+
+<!-- 主数据区 -->
+<div id="sec-data">
+  <div class="dashboard">
+    <div class="left-col">
+      <!-- 走势图：动态绘制 + 点击高亮 -->
+      <div class="card">
+        <div class="c-title">
+          <span class="zh">📈 历届联赛排名走势图 <small>点击图例高亮单人走势</small></span>
+          <span class="en">Past Results Rankings Trend · Click Legend to Highlight</span>
+        </div>
+        <div class="chart-wrap">
+          <svg class="trend-svg" id="trendSvg" viewBox="0 0 900 195" preserveAspectRatio="none">
+            <defs>
+              <filter id="glow-cwf"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <filter id="glow-ztq"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <filter id="glow-ch"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <filter id="glow-dj"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <line x1="60" y1="18" x2="860" y2="18" class="g-line"/>
+            <line x1="60" y1="71" x2="860" y2="71" class="g-line"/>
+            <line x1="60" y1="124" x2="860" y2="124" class="g-line"/>
+            <line x1="60" y1="177" x2="860" y2="177" class="g-line"/>
+            <text x="18" y="22" fill="var(--accent)" font-size="11" font-weight="bold">冠</text>
+            <text x="18" y="75" fill="#aaa" font-size="11">亚</text>
+            <text x="18" y="128" fill="#aaa" font-size="11">季</text>
+            <text x="18" y="181" fill="#ff6b6b" font-size="11">殿</text>
+            <!-- 走势线：用 stroke-dasharray 动画绘制 -->
+            <path id="line-cwf" d="M120,124 L350,71 L580,18 L810,18" class="l-cwf" style="stroke-dasharray:1000;stroke-dashoffset:1000"/>
+            <path id="line-ztq" d="M120,71 L350,177 L580,177 L810,71"  class="l-ztq" style="stroke-dasharray:1000;stroke-dashoffset:1000"/>
+            <path id="line-ch"  d="M120,18 L350,124 L580,124 L810,124" class="l-ch"  style="stroke-dasharray:1000;stroke-dashoffset:1000"/>
+            <path id="line-dj"  d="M120,177 L350,18 L580,71 L810,177"  class="l-dj"  style="stroke-dasharray:1000;stroke-dashoffset:1000"/>
+            <!-- 数据点 -->
+            <g id="pts-cwf" style="opacity:0"><circle cx="120" cy="124" class="pt" fill="var(--cwf)"/><circle cx="350" cy="71"  class="pt" fill="var(--cwf)"/><circle cx="580" cy="18"  class="pt" fill="var(--cwf)"/><circle cx="810" cy="18"  class="pt" fill="var(--cwf)"/></g>
+            <g id="pts-ztq" style="opacity:0"><circle cx="120" cy="71"  class="pt" fill="var(--ztq)"/><circle cx="350" cy="177" class="pt" fill="var(--ztq)"/><circle cx="580" cy="177" class="pt" fill="var(--ztq)"/><circle cx="810" cy="71"  class="pt" fill="var(--ztq)"/></g>
+            <g id="pts-ch"  style="opacity:0"><circle cx="120" cy="18"  class="pt" fill="var(--ch)"/> <circle cx="350" cy="124" class="pt" fill="var(--ch)"/> <circle cx="580" cy="124" class="pt" fill="var(--ch)"/> <circle cx="810" cy="124" class="pt" fill="var(--ch)"/></g>
+            <g id="pts-dj"  style="opacity:0"><circle cx="120" cy="177" class="pt" fill="var(--dj)"/><circle cx="350" cy="18"  class="pt" fill="var(--dj)"/><circle cx="580" cy="71"  class="pt" fill="var(--dj)"/><circle cx="810" cy="177" class="pt" fill="var(--dj)"/></g>
+            <text x="120" y="194" fill="#556b5f" text-anchor="middle" font-size="10">第一届</text>
+            <text x="350" y="194" fill="#556b5f" text-anchor="middle" font-size="10">第二届</text>
+            <text x="580" y="194" fill="#556b5f" text-anchor="middle" font-size="10">第三届</text>
+            <text x="810" y="194" fill="#556b5f" text-anchor="middle" font-size="10">第四届</text>
+          </svg>
+        </div>
+        <!-- 可点击图例 -->
+        <div class="chart-legend">
+          <div class="leg-item leg-clickable active" data-key="cwf" onclick="highlightLine('cwf')">
+            <div class="leg-bar" style="background:var(--cwf)"></div>迟文峰
+          </div>
+          <div class="leg-item leg-clickable active" data-key="ztq" onclick="highlightLine('ztq')">
+            <div class="leg-bar" style="background:var(--ztq)"></div>朱天祺
+          </div>
+          <div class="leg-item leg-clickable active" data-key="ch" onclick="highlightLine('ch')">
+            <div class="leg-bar" style="background:var(--ch)"></div>崔航
+          </div>
+          <div class="leg-item leg-clickable active" data-key="dj" onclick="highlightLine('dj')">
+            <div class="leg-bar" style="background:var(--dj)"></div>杜健
+          </div>
+          <div class="leg-item" onclick="resetLines()" style="cursor:pointer;color:var(--muted);font-size:.72rem;margin-left:8px">重置</div>
+        </div>
+      </div>
+      <!-- 三栏 -->
+      <div class="bottom-trio">
+        <div class="card">
+          <div class="c-title"><span class="zh">🍺 轮值主办次数</span><span class="en">Organizer Counts</span></div>
+          <div class="org-wrap">
+            <div class="org-box" id="orgBox"></div>
+            <div class="next-host-hint" id="nextHostHint"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="c-title"><span class="zh">🎱 台费账单</span><span class="en">Table Fees · 季军承担</span></div>
+          <div class="pies-4" id="pieFee"></div>
+        </div>
+        <div class="card">
+          <div class="c-title"><span class="zh">🍽️ 聚餐账单</span><span class="en">Dinner Bills · 殿军承担</span></div>
+          <div class="fee-list" id="dinnerFee"></div>
+        </div>
+      </div>
+    </div>
+    <!-- 赛程：高度 = 左侧总高，内容紧凑滚动 -->
+    <div class="card" style="min-height:0;align-self:stretch">
+      <div class="c-title tl-title-row">
+        <span class="zh">📋 历届对抗赛程史记</span>
+        <span class="en">History Matches · 最新在上 · 悬停暂停</span>
+        <button class="tl-view-all-btn" onclick="openAllMatches()">📖 查看全部</button>
+      </div>
+      <div class="timeline-scroll-wrap">
+        <div class="timeline" id="timeline"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 积分+组队 -->
+  <div class="wr-grid">
     <div class="card">
-      <div class="c-title">
-        <span class="zh">📈 历届联赛排名走势图 <small>点击头像查看个人详情</small></span>
-        <span class="en">Past Results Rankings Trend</span>
+      <div class="c-title"><span class="zh">🏆 个人综合积分排行</span><span class="en">Individual Score Ranking · 冠4/亚3/季2/殿1</span></div>
+      <div class="wr-legend">
+        <div class="wr-leg-item"><div class="wr-leg-dot" style="background:#ffd700"></div>冠军4分</div>
+        <div class="wr-leg-item"><div class="wr-leg-dot" style="background:#c0c0c0"></div>亚军3分</div>
+        <div class="wr-leg-item"><div class="wr-leg-dot" style="background:#cd7f32"></div>季军2分</div>
+        <div class="wr-leg-item"><div class="wr-leg-dot" style="background:#556b5f"></div>殿军1分</div>
       </div>
-      <div class="chart-wrap">
-        <svg class="trend-svg" viewBox="0 0 900 195" preserveAspectRatio="none">
-          <line x1="60" y1="18" x2="860" y2="18" class="g-line"/>
-          <line x1="60" y1="71" x2="860" y2="71" class="g-line"/>
-          <line x1="60" y1="124" x2="860" y2="124" class="g-line"/>
-          <line x1="60" y1="177" x2="860" y2="177" class="g-line"/>
-          <text x="18" y="22" fill="var(--accent)" font-size="11" font-weight="bold">冠</text>
-          <text x="18" y="75" fill="#aaa" font-size="11">亚</text>
-          <text x="18" y="128" fill="#aaa" font-size="11">季</text>
-          <text x="18" y="181" fill="#ff6b6b" font-size="11">殿</text>
-          <path d="M120,124 L350,71 L580,18 L810,18" class="l-cwf"/>
-          <path d="M120,71 L350,177 L580,177 L810,71" class="l-ztq"/>
-          <path d="M120,18 L350,124 L580,124 L810,124" class="l-ch"/>
-          <path d="M120,177 L350,18 L580,71 L810,177" class="l-dj"/>
-          <g><circle cx="120" cy="124" class="pt" fill="var(--cwf)"/><circle cx="350" cy="71" class="pt" fill="var(--cwf)"/><circle cx="580" cy="18" class="pt" fill="var(--cwf)"/><circle cx="810" cy="18" class="pt" fill="var(--cwf)"/></g>
-          <g><circle cx="120" cy="71" class="pt" fill="var(--ztq)"/><circle cx="350" cy="177" class="pt" fill="var(--ztq)"/><circle cx="580" cy="177" class="pt" fill="var(--ztq)"/><circle cx="810" cy="71" class="pt" fill="var(--ztq)"/></g>
-          <g><circle cx="120" cy="18" class="pt" fill="var(--ch)"/><circle cx="350" cy="124" class="pt" fill="var(--ch)"/><circle cx="580" cy="124" class="pt" fill="var(--ch)"/><circle cx="810" cy="124" class="pt" fill="var(--ch)"/></g>
-          <g><circle cx="120" cy="177" class="pt" fill="var(--dj)"/><circle cx="350" cy="18" class="pt" fill="var(--dj)"/><circle cx="580" cy="71" class="pt" fill="var(--dj)"/><circle cx="810" cy="177" class="pt" fill="var(--dj)"/></g>
-          <text x="120" y="194" fill="#556b5f" text-anchor="middle" font-size="10">第一届</text>
-          <text x="350" y="194" fill="#556b5f" text-anchor="middle" font-size="10">第二届</text>
-          <text x="580" y="194" fill="#556b5f" text-anchor="middle" font-size="10">第三届</text>
-          <text x="810" y="194" fill="#556b5f" text-anchor="middle" font-size="10">第四届</text>
-        </svg>
-      </div>
-      <div class="chart-legend">
-        <div class="leg-item"><div class="leg-bar" style="background:var(--cwf)"></div>迟文峰</div>
-        <div class="leg-item"><div class="leg-bar" style="background:var(--ztq)"></div>朱天祺</div>
-        <div class="leg-item"><div class="leg-bar" style="background:var(--ch)"></div>崔航</div>
-        <div class="leg-item"><div class="leg-bar" style="background:var(--dj)"></div>杜健</div>
-      </div>
+      <div class="wr-cards" id="wrCards"></div>
     </div>
-
-    <!-- 三栏 -->
-    <div class="bottom-trio">
-      <div class="card">
-        <div class="c-title">
-          <span class="zh">🍺 轮值主办次数</span>
-          <span class="en">Organizer Counts</span>
-        </div>
-        <div class="org-wrap">
-          <div class="org-box" id="orgBox"></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="c-title">
-          <span class="zh">🎱 台费账单</span>
-          <span class="en">Table Fees · 季军承担</span>
-        </div>
-        <div class="pies-4" id="pieFee"></div>
-      </div>
-      <div class="card">
-        <div class="c-title">
-          <span class="zh">🍽️ 聚餐账单</span>
-          <span class="en">Dinner Bills · 殿军承担</span>
-        </div>
-        <div class="fee-list" id="dinnerFee"></div>
-      </div>
+    <div class="card">
+      <div class="c-title"><span class="zh">🤝 历届组队胜率分析</span><span class="en">Team Partnership Win Rates</span></div>
+      <div class="team-grid" id="teamGrid"></div>
     </div>
-  </div>
-
-  <!-- 赛程 -->
-  <div class="card">
-    <div class="c-title">
-      <span class="zh">📋 历届对抗赛程史记</span>
-      <span class="en">History Matches Timeline</span>
-    </div>
-    <div class="timeline" id="timeline"></div>
   </div>
 </div>
 
-<!-- 积分+组队 -->
-<div class="wr-grid">
-  <div class="card">
-    <div class="c-title">
-      <span class="zh">🏆 个人综合积分排行</span>
-      <span class="en">Individual Score Ranking · 冠4 / 亚3 / 季2 / 殿1</span>
+<!-- 全部赛程弹窗 -->
+<div class="all-matches-overlay" id="allMatchesOverlay" onclick="closeAllMatches()">
+  <div class="all-matches-panel" onclick="event.stopPropagation()">
+    <div class="am-head">
+      <div>
+        <div class="am-title">🏆 历届对抗赛程史记</div>
+        <div class="am-subtitle">All Editions · Complete Match Records</div>
+      </div>
+      <button class="am-close" onclick="closeAllMatches()">✕</button>
     </div>
-    <div class="wr-legend">
-      <div class="wr-leg-item"><div class="wr-leg-dot" style="background:#ffd700"></div>冠军 4分</div>
-      <div class="wr-leg-item"><div class="wr-leg-dot" style="background:#c0c0c0"></div>亚军 3分</div>
-      <div class="wr-leg-item"><div class="wr-leg-dot" style="background:#cd7f32"></div>季军 2分</div>
-      <div class="wr-leg-item"><div class="wr-leg-dot" style="background:#556b5f"></div>殿军 1分</div>
-    </div>
-    <div class="wr-cards" id="wrCards"></div>
-  </div>
-  <div class="card">
-    <div class="c-title">
-      <span class="zh">🤝 历届组队胜率分析</span>
-      <span class="en">Team Partnership Win Rates · 所有组合统计</span>
-    </div>
-    <div class="team-grid" id="teamGrid"></div>
+    <div class="am-list" id="amList"></div>
   </div>
 </div>
 
-<!-- 画廊 -->
-<div class="gallery-section">
-  <div class="gallery-head">
-    <div class="gallery-title-row">📸 赛事相册 · 点击放大原图</div>
-    <div class="gallery-tabs" id="galleryTabs"></div>
+<!-- 视频 -->
+<div class="hscroll-section" id="sec-video">
+  <div class="hscroll-head">
+    <div class="hscroll-title">🎬 精彩视频集锦 <span class="sub">Highlight Reels</span></div>
   </div>
-  <div id="galleryBody"></div>
+  <div class="vfilter-bar">
+    <span class="vf-label">选手筛选</span>
+    <div class="vf-chip on fc-cwf" data-t="m" data-v="cwf" onclick="vToggle(this)">迟文峰</div>
+    <div class="vf-chip on fc-ztq" data-t="m" data-v="ztq" onclick="vToggle(this)">朱天祺</div>
+    <div class="vf-chip on fc-ch"  data-t="m" data-v="ch"  onclick="vToggle(this)">崔航</div>
+    <div class="vf-chip on fc-dj"  data-t="m" data-v="dj"  onclick="vToggle(this)">杜健</div>
+    <div class="vf-div"></div>
+    <div class="vf-chip vf-reset" onclick="vReset()">重置</div>
+  </div>
+  <div class="hscroll-outer"><div class="hscroll-inner" id="videoInner"></div></div>
+</div>
+
+<!-- 相册 -->
+<div class="hscroll-section" id="sec-gallery">
+  <div class="hscroll-head">
+    <div class="hscroll-title">📸 赛事相册 <span class="sub">点击图片放大</span></div>
+    <div class="hscroll-tabs" id="albumTabs"></div>
+  </div>
+  <div class="hscroll-outer"><div class="hscroll-inner" id="albumInner"></div></div>
 </div>
 
 <!-- 灯箱 -->
@@ -584,13 +909,19 @@ const PHOTOS={
     <img id="lbImg" src="" alt="">
     <div class="lb-meta">
       <div class="lb-title" id="lbTitle"></div>
-      <div class="lb-sub">
-        <span>📅 <span id="lbDate"></span></span>
-        <span>📍 <span id="lbVenue"></span></span>
-      </div>
+      <div class="lb-sub"><span>📅 <span id="lbDate"></span></span><span>📍 <span id="lbVenue"></span></span></div>
     </div>
   </div>
   <div class="lb-cnt" id="lbCnt"></div>
+</div>
+
+<!-- 视频弹窗 -->
+<div class="vmask" id="vmask" onclick="closeVMask()">
+  <button class="vmask-close" onclick="closeVMask()">✕</button>
+  <div class="vmask-inner" onclick="event.stopPropagation()">
+    <div class="vmask-frame"><iframe id="vIframe" src="" allowfullscreen allow="autoplay"></iframe></div>
+    <div class="vmask-title" id="vTitle"></div>
+  </div>
 </div>
 
 <!-- 规程弹窗 -->
@@ -601,44 +932,21 @@ const PHOTOS={
       <button class="m-close" onclick="closeModal()">✕</button>
     </div>
     <div class="reg-grid">
-      <div class="reg-item">
-        <div class="reg-icon">👥</div>
-        <h4><span>01. 抽签分组团队赛</span><small>Team Draw & 2V2 Formats</small></h4>
-        <p>每届开赛前现场随机进行席位抽签，四名成员两两组队展开 2V2 团队对抗赛。<em>Random seed draw to establish dual-player teams for an official 2V2 matchup.</em></p>
-      </div>
-      <div class="reg-item">
-        <div class="reg-icon">⚡</div>
-        <h4><span>02. 团队赛决胜机制</span><small>Race to 9 Wins Format</small></h4>
-        <p>采用单场抢 9 局（Race to 9）决胜长局制，率先斩获 9 局胜利的战队晋级冠亚军总决赛。<em>High-stakes race-to-9 wins; victors advance to the grand final.</em></p>
-      </div>
-      <div class="reg-item">
-        <div class="reg-icon">🎯</div>
-        <h4><span>03. 位次角逐个人赛</span><small>1V1 Placement Stage</small></h4>
-        <p>团队赛后转入个人排位对决（BO3）：胜方两名成员争夺冠亚军，败方两名成员争夺季殿军。<em>Post-team phase BO3; winning teammates fight for 1st/2nd, losing for 3rd/4th.</em></p>
-      </div>
-      <div class="reg-item">
-        <div class="reg-icon">💰</div>
-        <h4><span>04. 主办轮值与费用分担</span><small>Financial & Hosting</small></h4>
-        <p>主办人轮值统筹，负责选定场地及酒水赞助；季军承担台费，殿军全额承担赛后聚餐费用。<em>Rotating organizers. 3rd covers table fees; 4th covers dinner.</em></p>
-      </div>
-      <div class="reg-item full">
-        <div class="reg-icon">⭐</div>
-        <h4><span>05. 个人积分与综合胜率计算规则</span><small>Scoring & Win-Rate System</small></h4>
-        <p>每届按最终名次计分，历届累积计算排名：</p>
-        <table class="score-tbl">
-          <tr><td>🥇 冠军（第一名）</td><td>4 分</td></tr>
-          <tr><td>🥈 亚军（第二名）</td><td>3 分</td></tr>
-          <tr><td>🥉 季军（第三名）</td><td>2 分</td></tr>
-          <tr><td>🏅 殿军（第四名）</td><td>1 分</td></tr>
-        </table>
-        <p class="score-note">积分百分比 = 累计积分 ÷ 最高可得积分（届数 × 4），个人综合积分排行从高到低排序。<br>
-        <em>Score % = total pts ÷ max possible (editions × 4). Rankings sorted descending.</em></p>
+      <div class="reg-item"><div class="reg-icon">👥</div><h4><span>01. 抽签分组团队赛</span><small>Team Draw & 2V2</small></h4><p>每届开赛前现场随机席位抽签，四名成员两两组队展开 2V2 团队对抗赛。<em>Random draw for 2V2 team matchup.</em></p></div>
+      <div class="reg-item"><div class="reg-icon">⚡</div><h4><span>02. 团队赛决胜机制</span><small>Race to 9 Wins</small></h4><p>采用单场抢 9 局（Race to 9）决胜制，率先斩获 9 局胜利的战队晋级冠亚君总决赛。<em>First to 9 wins advances to grand final.</em></p></div>
+      <div class="reg-item"><div class="reg-icon">🎯</div><h4><span>03. 位次角逐个人赛</span><small>1V1 Placement</small></h4><p>团队赛后转入个人排位对决（BO3）：胜方争夺冠亚军，败方争夺季殿军。<em>BO3 placement; winners fight for 1st/2nd, losers for 3rd/4th.</em></p></div>
+      <div class="reg-item"><div class="reg-icon">💰</div><h4><span>04. 主办轮值与费用分担</span><small>Hosting & Finance</small></h4><p>主办人轮值统筹，负责场地及酒水赞助；季军承担台费，殿军全额承担赛后聚餐费用。<em>3rd covers table fees; 4th covers dinner.</em></p></div>
+      <div class="reg-item full"><div class="reg-icon">⭐</div><h4><span>05. 个人积分与综合胜率计算规则</span><small>Scoring & Win-Rate System</small></h4>
+        <p>每届按最终名次计分，历届累积：</p>
+        <table class="score-tbl"><tr><td>🥇 冠军</td><td>4 分</td></tr><tr><td>🥈 亚军</td><td>3 分</td></tr><tr><td>🥉 季军</td><td>2 分</td></tr><tr><td>🏅 殿军</td><td>1 分</td></tr></table>
+        <p class="score-note">积分百分比 = 累计积分 ÷（届数×4），从高到低排序。<em>Score % = total ÷ (editions×4). Rankings sorted descending.</em></p>
       </div>
     </div>
   </div>
 </div>
 
 <script>
+/* ════ 常量 ════ */
 const RANK_EMOJI=['','🥇','🥈','🥉','🏅'];
 const RANK_CLASS=['','r1','r2','r3','r4'];
 const RANK_LABEL=['','冠军','亚军','季军','殿军'];
@@ -646,25 +954,36 @@ const SCORE_MAP={1:4,2:3,3:2,4:1};
 const ORDER=['cwf','ztq','ch','dj'];
 const ED_CN=['','一','二','三','四','五','六','七','八','九','十'];
 
+/* ════ 粒子背景 ════ */
+(function(){
+  const c=document.getElementById('particles');
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    const s=Math.random()*5+3;
+    p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;`+
+      `animation-duration:${Math.random()*18+10}s;animation-delay:-${Math.random()*18}s;`+
+      `opacity:${Math.random()*.35+.08}`;
+    c.appendChild(p);
+  }
+})();
+
+/* ════ 统计 ════ */
 function calcStats(){
   const s={};
   ORDER.forEach(k=>s[k]={wins:0,teamWins:0,teamTotal:0,pts:0,byEdition:{}});
   MATCHES.forEach(m=>{
     ORDER.forEach(k=>{
       const r=m.ranks[k];
-      s[k].pts+=SCORE_MAP[r];
-      if(r===1)s[k].wins++;
+      s[k].pts+=SCORE_MAP[r];if(r===1)s[k].wins++;
       s[k].byEdition[m.edition]=r;
       const inA=m.teamA.includes(k),inB=m.teamB.includes(k);
-      if(inA||inB){
-        s[k].teamTotal++;
-        if((inA&&m.winner==='A')||(inB&&m.winner==='B'))s[k].teamWins++;
-      }
+      if(inA||inB){s[k].teamTotal++;
+        if((inA&&m.winner==='A')||(inB&&m.winner==='B'))s[k].teamWins++;}
     });
   });
   return s;
 }
-
 function calcTeams(){
   const map={};
   MATCHES.forEach(m=>{
@@ -679,40 +998,65 @@ function calcTeams(){
       map[key].editions.push({ed:m.edition,won});
     });
   });
-  const allPairs=[];
+  const all=[];
   for(let i=0;i<ORDER.length;i++)for(let j=i+1;j<ORDER.length;j++){
     const key=ORDER[i]+'+'+ORDER[j];
-    if(map[key])allPairs.push(map[key]);
-    else allPairs.push({members:[ORDER[i],ORDER[j]],wins:0,total:0,editions:[],never:true});
+    if(map[key])all.push(map[key]);
+    else all.push({members:[ORDER[i],ORDER[j]],wins:0,total:0,editions:[],never:true});
   }
-  return allPairs.sort((a,b)=>{
-    if(a.never&&!b.never)return 1;
-    if(!a.never&&b.never)return-1;
+  return all.sort((a,b)=>{
+    if(a.never&&!b.never)return 1;if(!a.never&&b.never)return-1;
     return b.wins/b.total-a.wins/a.total;
   });
 }
 
-/* ── 头像 ── */
+/* ════ 头像 ════ */
 function renderAvatars(){
   const BADGES={cwf:'🏆',ztq:'🥈',ch:'⭐',dj:'⚡'};
   document.getElementById('avatarGrid').innerHTML=ORDER.map(k=>{
-    const m=MEMBERS[k],stats=calcStats()[k];
-    // ★ fix6: 只显示金色星，数量=冠军次数，0冠不显示星
-    const stars=stats.wins>0?Array(stats.wins).fill('<span class="star-gold">★</span>').join(''):'';
+    const m=MEMBERS[k],st=calcStats()[k];
+    const stars=st.wins>0?Array(st.wins).fill('<span class="star-gold">★</span>').join(''):'';
     return`<div class="avatar-card" data-member="${k}" onclick="openProfile('${k}')">
-      <div class="avatar-ring">
-        <img src="${m.img}" alt="${m.name}">
-        <div class="badge-icon">${BADGES[k]}</div>
-      </div>
+      <div class="avatar-ring"><img src="${m.img}" alt="${m.name}">
+        <div class="badge-icon">${BADGES[k]}</div></div>
       <div class="avatar-name">${m.name}</div>
       <div class="avatar-stars">${stars}</div>
     </div>`;
   }).join('');
 }
 
-/* ── 赛程 ── */
+/* ════ 抽签模拟器 ════ */
+function drawLots(){
+  const keys=[...ORDER];
+  for(let i=keys.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [keys[i],keys[j]]=[keys[j],keys[i]];
+  }
+  const tA=[keys[0],keys[1]].sort((a,b)=>ORDER.indexOf(a)-ORDER.indexOf(b));
+  const tB=[keys[2],keys[3]].sort((a,b)=>ORDER.indexOf(a)-ORDER.indexOf(b));
+  document.getElementById('drawTeams').innerHTML=`
+    <div class="draw-team">
+      <div class="draw-team-label">A 队</div>
+      <div class="draw-team-names">
+        ${tA.map(k=>`<span class="draw-name" style="color:var(--${k})">${MEMBERS[k].name}</span>`).join('')}
+      </div>
+    </div>
+    <div class="draw-vs">VS</div>
+    <div class="draw-team">
+      <div class="draw-team-label">B 队</div>
+      <div class="draw-team-names">
+        ${tB.map(k=>`<span class="draw-name" style="color:var(--${k})">${MEMBERS[k].name}</span>`).join('')}
+      </div>
+    </div>`;
+  const res=document.getElementById('drawResult');
+  res.classList.remove('show');
+  requestAnimationFrame(()=>res.classList.add('show'));
+}
+
+/* ════ 赛程（倒序 + 无缝滚动）════ */
 function renderTimeline(){
-  document.getElementById('timeline').innerHTML=MATCHES.map(m=>{
+  const reversed=[...MATCHES].reverse();
+  function buildMatchHTML(m){
     const sortedA=[...m.teamA].sort((a,b)=>ORDER.indexOf(a)-ORDER.indexOf(b));
     const sortedB=[...m.teamB].sort((a,b)=>ORDER.indexOf(a)-ORDER.indexOf(b));
     const labelA=sortedA.map(k=>MEMBERS[k].name).join(' & ');
@@ -720,38 +1064,45 @@ function renderTimeline(){
     const aWon=m.winner==='A',bWon=m.winner==='B';
     const byRank=ORDER.slice().sort((a,b)=>m.ranks[a]-m.ranks[b]);
     const chips=byRank.map(k=>{
-      const r=m.ranks[k];
-      const inA=m.teamA.includes(k);
+      const r=m.ranks[k],inA=m.teamA.includes(k);
       const isW=(inA&&aWon)||(!inA&&bWon);
       return`<div class="rank-chip${isW?' winner-chip':''}">
         <span class="rank-chip-emoji">${RANK_EMOJI[r]}</span>
-        <span class="rank-chip-name">${MEMBERS[k].name}</span>
-        ${isW?'👑':''}
+        <span class="rank-chip-name">${MEMBERS[k].name}</span>${isW?'👑':''}
       </div>`;
     }).join('');
     return`<div class="match-box">
       <div class="match-date-line">📅 ${m.date}</div>
       <div class="match-title">第${ED_CN[m.edition]}届大师赛</div>
-      <div class="match-info">
-        📍 ${m.venue}&nbsp;&nbsp;👔 主办: ${m.host}&nbsp;&nbsp;🍽️ 聚餐: ${m.dinner}
-      </div>
+      <div class="match-info">📍 ${m.venue}&nbsp;&nbsp;👔 主办: ${m.host}&nbsp;&nbsp;🍽️ 聚餐: ${m.dinner}</div>
       <div class="match-vs-row">
-        <div class="vs-team${aWon?' vs-winner':''}">
-          ${aWon?'🔥 ':''}${labelA}
-        </div>
+        <div class="vs-team${aWon?' vs-winner':''}">${aWon?'🔥 ':''}${labelA}</div>
         <div class="vs-x">VS</div>
-        <div class="vs-team${bWon?' vs-winner':''}">
-          ${bWon?'🔥 ':''}${labelB}
-        </div>
+        <div class="vs-team${bWon?' vs-winner':''}">${bWon?'🔥 ':''}${labelB}</div>
       </div>
       <div class="match-ranks-row">${chips}</div>
     </div>`;
-  }).join('');
+  }
+  const separator=`<div class="tl-separator">
+    <div class="tl-sep-line"></div>
+    <div class="tl-sep-text">— 循环开始 —</div>
+    <div class="tl-sep-line"></div>
+  </div>`;
+  const matchesHTML=reversed.map(buildMatchHTML).join('');
+  const tl=document.getElementById('timeline');
+  // 内容 + 分隔符 + 内容副本（无缝循环）
+  tl.innerHTML=matchesHTML+separator+matchesHTML+separator;
+  // 动态计算动画时长：每届约6s
+  const dur=reversed.length*6;
+  tl.style.setProperty('--tl-dur',`${dur}s`);
+  tl.style.animationDuration=`${dur}s`;
 }
 
-/* ── 主办柱状图 ── */
+/* ════ 主办柱状图 + 下届主办人 ════ */
 function renderOrg(){
   const cnt={};ORDER.forEach(k=>cnt[k]=0);
+  // 轮值顺序
+  const HOST_ORDER=['ztq','ch','dj','cwf'];
   MATCHES.forEach(m=>{const k=ORDER.find(k=>MEMBERS[k].name===m.host);if(k)cnt[k]++;});
   const max=Math.max(...Object.values(cnt),1);
   document.getElementById('orgBox').innerHTML=ORDER.map(k=>`
@@ -760,16 +1111,20 @@ function renderOrg(){
       <div class="bar-pill" style="height:${Math.max(Math.round(cnt[k]/max*100),4)}px;--bc:var(--${k})"></div>
       <div class="bar-lbl">${MEMBERS[k].name}</div>
     </div>`).join('');
+  // 下届主办人：按轮值顺序，取第N届对应
+  const nextIdx=MATCHES.length % HOST_ORDER.length;
+  const nextKey=HOST_ORDER[nextIdx];
+  document.getElementById('nextHostHint').innerHTML=
+    `下届（第${ED_CN[MATCHES.length+1]}届）主办<br><strong>${MEMBERS[nextKey].name}</strong>`;
 }
 
-/* ── 台费四饼 ── */
+/* ════ 台费饼图 ════ */
 function renderPie(){
   const cnt={};ORDER.forEach(k=>cnt[k]=0);
   MATCHES.forEach(m=>{const k=ORDER.find(k=>m.ranks[k]===3);if(k)cnt[k]++;});
   const total=MATCHES.length;
   document.getElementById('pieFee').innerHTML=ORDER.map(k=>{
-    const n=cnt[k],pct=total?Math.round(n/total*100):0;
-    const c=`var(--${k})`;
+    const n=cnt[k],pct=total?Math.round(n/total*100):0,c=`var(--${k})`;
     return`<div class="mini-pie-wrap">
       <div class="mini-pie-svg-box">
         <svg class="mini-pie-svg" viewBox="0 0 36 36">
@@ -783,18 +1138,17 @@ function renderPie(){
         </div>
       </div>
       <div class="mini-pie-name" style="color:${c}">${MEMBERS[k].name}</div>
-      <div class="mini-pie-detail">${n>0?`${pct}%`:'未承担'}</div>
+      <div class="mini-pie-detail">${n>0?pct+'%':'未承担'}</div>
     </div>`;
   }).join('');
 }
 
-/* ── 聚餐 ── */
+/* ════ 聚餐账单 ════ */
 function renderDinner(){
   const cnt={};ORDER.forEach(k=>cnt[k]=0);
   MATCHES.forEach(m=>{const k=ORDER.find(k=>m.ranks[k]===4);if(k)cnt[k]++;});
   const max=Math.max(...Object.values(cnt),1);
-  const sorted=[...ORDER].sort((a,b)=>cnt[b]-cnt[a]);
-  document.getElementById('dinnerFee').innerHTML=sorted.map(k=>`
+  document.getElementById('dinnerFee').innerHTML=[...ORDER].sort((a,b)=>cnt[b]-cnt[a]).map(k=>`
     <div class="fee-row">
       <div class="fee-meta">
         <span class="fee-name" style="color:var(--${k})">${MEMBERS[k].name}</span>
@@ -806,7 +1160,17 @@ function renderDinner(){
     </div>`).join('');
 }
 
-/* ── ★ fix3: 积分排行卡片 ── */
+/* ════ 积分排行（CountUp动画）════ */
+function countUp(el,target,suffix='',dur=950){
+  let st=null;
+  const step=ts=>{
+    if(!st)st=ts;
+    const p=Math.min((ts-st)/dur,1);
+    el.textContent=Math.round(p*target)+suffix;
+    if(p<1)requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
 function renderWR(stats){
   const maxPts=MATCHES.length*4;
   const sorted=[...ORDER].sort((a,b)=>stats[b].pts-stats[a].pts);
@@ -824,25 +1188,35 @@ function renderWR(stats){
       <div class="wr-card-body">
         <div class="wr-card-name" style="color:var(--${k})">${MEMBERS[k].name}</div>
         <div class="wr-bar-bg">
-          <div class="wr-bar-fill" style="width:${pct}%;background:var(--${k})"></div>
+          <div class="wr-bar-fill" data-w="${pct}" style="background:var(--${k})"></div>
         </div>
         <div class="wr-card-medals">${medals(k)}</div>
       </div>
       <div class="wr-card-right">
-        <div class="wr-card-pct" style="color:var(--${k})">${pct}%</div>
+        <div class="wr-card-pct" data-pct="${pct}" style="color:var(--${k})">0%</div>
         <div class="wr-card-pts">${stats[k].pts} 分</div>
       </div>
     </div>`;
   }).join('');
+  // 延迟触发动画
+  setTimeout(()=>{
+    document.querySelectorAll('.wr-bar-fill').forEach(el=>el.style.width=el.dataset.w+'%');
+    document.querySelectorAll('.wr-card-pct').forEach(el=>{
+      const t=parseInt(el.dataset.pct);
+      countUp(el,t,'%');
+    });
+  },350);
 }
 
-/* ── 组队胜率 ── */
+/* ════ 组队 ════ */
 function renderTeams(){
   calcTeams().forEach(t=>{
     const el=document.createElement('div');
+    const names=t.members.map(k=>`<span style="color:var(--${k})">${MEMBERS[k].name}</span>`)
+      .join('<span class="amp"> & </span>');
     if(t.never){
       el.className='team-card';
-      el.innerHTML=`<div class="team-names">${t.members.map(k=>`<span style="color:var(--${k})">${MEMBERS[k].name}</span>`).join('<span class="amp"> & </span>')}</div>
+      el.innerHTML=`<div class="team-names">${names}</div>
         <div class="team-pct" style="color:var(--muted)">—</div>
         <div class="team-rec" style="color:var(--muted)">从未组队</div>
         <div class="never-badge">尚未搭档</div>`;
@@ -851,7 +1225,7 @@ function renderTeams(){
       const isBest=(pct>=67&&t.total>=2)||pct===100;
       const pctClr=pct===0?'#ff6b6b':pct===100?'var(--glow)':pct>=67?'var(--ztq)':'var(--accent)';
       el.className='team-card'+(isBest?' best':'');
-      el.innerHTML=`<div class="team-names">${t.members.map(k=>`<span style="color:var(--${k})">${MEMBERS[k].name}</span>`).join('<span class="amp"> & </span>')}</div>
+      el.innerHTML=`<div class="team-names">${names}</div>
         <div class="team-pct" style="color:${pctClr}">${pct}%</div>
         <div class="team-rec">${t.wins}胜 ${t.total-t.wins}负</div>
         <div class="team-eds">${t.editions.map(e=>`届${e.ed}${e.won?'✓':'✗'}`).join(' ')}</div>
@@ -861,136 +1235,146 @@ function renderTeams(){
   });
 }
 
-/* ── ★ fix4: 画廊 ── */
+/* ════ 视频筛选（仅选手）════ */
+const vF={m:new Set(['cwf','ztq','ch','dj'])};
+function vToggle(el){
+  const v=el.dataset.v;
+  if(vF.m.has(v)){vF.m.delete(v);el.classList.remove('on')}
+  else{vF.m.add(v);el.classList.add('on')}
+  renderVideos();
+}
+function vReset(){
+  vF.m=new Set(['cwf','ztq','ch','dj']);
+  document.querySelectorAll('.vf-chip[data-t]').forEach(c=>c.classList.add('on'));
+  renderVideos();
+}
+
+/* ════ 视频渲染 ════ */
+function renderVideos(){
+  const inner=document.getElementById('videoInner');
+  const list=VIDEOS.filter(v=>v.members.some(m=>vF.m.has(m)));
+  if(!list.length){
+    inner.innerHTML=`<div class="v-empty">
+      <div class="v-empty-icon">🎬</div>
+      <div class="v-empty-txt">暂无符合条件的视频<br>请调整筛选标签</div>
+    </div>`;
+    return;
+  }
+  inner.innerHTML=list.map(v=>{
+    const hasBv=v.bvid&&v.bvid.trim()!=='';
+    const mTags=v.members.map(k=>`<span class="vtag tc-${k}">${MEMBERS[k].name}</span>`).join('');
+    const sTags=v.skills.map(s=>`<span class="vtag tc-sk">${s}</span>`).join('');
+    const clickFn=hasBv?`openVMask('${v.bvid}','${v.title.replace(/'/g,"\\'")}')`:null;
+    return`<div class="video-card${hasBv?'':' no-bv'}" ${clickFn?`onclick="${clickFn}"`:''}>
+      <div class="v-thumb">
+        <div class="v-placeholder">
+          <div class="v-placeholder-icon">${hasBv?'▶️':'🎬'}</div>
+          <div class="v-placeholder-txt">${hasBv?v.title:'视频待上传'}</div>
+        </div>
+        ${hasBv?`<div class="v-play-ov"><div class="v-play-circle">▶</div></div>`:''}
+      </div>
+      <div class="v-info">
+        <div class="v-title">${v.title}</div>
+        <div class="v-tags">${mTags}${sTags}</div>
+        <div class="v-meta">${v.date}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function openVMask(bvid,title){
+  document.getElementById('vIframe').src=
+    `https://player.bilibili.com/player.html?bvid=${bvid}&page=1&as_wide=1&high_quality=1&danmaku=0`;
+  document.getElementById('vTitle').textContent=title;
+  document.getElementById('vmask').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeVMask(){
+  document.getElementById('vmask').classList.remove('open');
+  document.getElementById('vIframe').src='';
+  document.body.style.overflow='';
+}
+
+/* ════ 相册：横向，每届一张卡，内部自动轮播 ════ */
 let lbItems=[],lbIdx=0;
-const autoTimers={};
+const autoT={};
+const edCurSlide={};
 
-function renderGalleryTabs(){
+function renderAlbumTabs(){
   const eds=Object.keys(PHOTOS).map(Number).sort();
-  document.getElementById('galleryTabs').innerHTML=
-    `<div class="g-tab active" onclick="switchGTab('all',this)">全部</div>`+
-    eds.map(ed=>`<div class="g-tab" onclick="switchGTab('${ed}',this)">第${ED_CN[ed]}届</div>`).join('');
+  document.getElementById('albumTabs').innerHTML=
+    `<div class="h-tab active" onclick="switchAlbum('all',this)">全部</div>`+
+    eds.map(ed=>`<div class="h-tab" onclick="switchAlbum('${ed}',this)">第${ED_CN[ed]}届</div>`).join('');
 }
-
-function switchGTab(f,el){
-  document.querySelectorAll('.g-tab').forEach(t=>t.classList.remove('active'));
+function switchAlbum(f,el){
+  document.querySelectorAll('#albumTabs .h-tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  Object.values(autoTimers).forEach(t=>clearInterval(t));
-  renderGallery(f);
+  Object.values(autoT).forEach(clearInterval);
+  renderAlbum(f);
 }
-
-function renderGallery(filter){
-  const body=document.getElementById('galleryBody');
+function renderAlbum(filter){
+  const inner=document.getElementById('albumInner');
   lbItems=[];
   const eds=Object.keys(PHOTOS).map(Number).sort();
-
-  if(filter==='all'){
-    // 全部：每届一个自动轮播窗口，4列
-    let html='<div class="gallery-all-grid">';
-    eds.forEach(ed=>{
-      const photos=PHOTOS[ed]||[];
-      const m=MATCHES.find(x=>x.edition===ed);
-      const startIdx=lbItems.length;
-      photos.forEach((p,i)=>lbItems.push({
-        src:p.src,
-        caption:`第${ED_CN[ed]}届 — ${p.caption}`,
-        date:m?m.date:'',venue:m?m.venue:''
-      }));
-      const slides=photos.map((p,i)=>`
-        <div class="ed-slide${i===0?' active':''}" data-idx="${startIdx+i}">
-          <img src="${p.src}" alt="${p.caption}" loading="lazy">
-          <div class="ed-slide-overlay">
-            <div class="ed-caption">${p.caption}</div>
-            <div class="ed-meta">📅 ${m?m.date:''}</div>
-          </div>
-        </div>`).join('');
-      const dots=photos.map((_,i)=>`<div class="ed-dot${i===0?' active':''}" onclick="event.stopPropagation();goEdSlide(${ed},${i})"></div>`).join('');
-      html+=`<div class="ed-slider-box" id="edbox-${ed}" onclick="openLbFromEd(${ed})">
-        ${slides}
-        <div class="ed-edition-badge">第${ED_CN[ed]}届</div>
-        <div class="ed-zoom-hint">🔍 点击放大</div>
-        <div class="ed-dots" id="eddots-${ed}">${dots}</div>
-      </div>`;
-    });
-    html+='</div>';
-    body.innerHTML=html;
-    // 启动每届自动轮播
-    eds.forEach(ed=>{
-      const photos=PHOTOS[ed]||[];
-      if(photos.length>1){
-        let cur=0;
-        autoTimers[ed]=setInterval(()=>{
-          cur=(cur+1)%photos.length;
-          setEdSlide(ed,cur);
-        },2800);
-      }
-    });
-  }else{
-    // 单届：大图水平轮播
-    const ed=parseInt(filter);
+  const showEds=filter==='all'?eds:[parseInt(filter)];
+  inner.innerHTML=showEds.map(ed=>{
     const photos=PHOTOS[ed]||[];
     const m=MATCHES.find(x=>x.edition===ed);
-    photos.forEach(p=>lbItems.push({
-      src:p.src,caption:`第${ED_CN[ed]}届 — ${p.caption}`,
+    const startIdx=lbItems.length;
+    photos.forEach((p,i)=>lbItems.push({
+      src:p.src,
+      caption:`第${ED_CN[ed]}届 — ${p.caption}`,
       date:m?m.date:'',venue:m?m.venue:''
     }));
+    edCurSlide[ed]=0;
     const slides=photos.map((p,i)=>`
-      <div class="single-slide" onclick="openLb(${i})">
-        <img src="${p.src}" alt="${p.caption}" loading="lazy">
-        <div class="single-info">
-          <div class="single-caption">${p.caption}</div>
-          <div class="single-meta"><span>📅 ${m?m.date:''}</span><span>📍 ${m?m.venue:''}</span></div>
-        </div>
+      <div class="a-slide${i===0?' active':''}">
+        <img src="${p.src}" alt="${p.caption}" loading="${i<2?'eager':'lazy'}">
+        <div class="a-ov"><div class="a-caption">${p.caption}</div></div>
       </div>`).join('');
-    const dots=photos.map((_,i)=>`<div class="s-dot${i===0?' active':''}" onclick="goSingle(${i})"></div>`).join('');
-    body.innerHTML=`<div class="gallery-single">
-      <div class="single-slider-wrap">
-        <div class="single-track" id="singleTrack">${slides}</div>
-        <div class="single-arrows">
-          <div class="s-arrow" onclick="navSingle(-1)">‹</div>
-          <div class="s-arrow" onclick="navSingle(1)">›</div>
-        </div>
+    const dots=photos.length>1?
+      `<div class="a-dots">${photos.map((_,i)=>
+        `<div class="a-dot${i===0?' active':''}" onclick="event.stopPropagation();setASlide(${ed},${i})"></div>`
+      ).join('')}</div>`:'';
+    return`<div class="album-card" onclick="openLbFromAlbum(${ed},${startIdx})">
+      <div class="album-slider" id="asl-${ed}">
+        ${slides}
+        <div class="a-badge">第${ED_CN[ed]}届</div>
+        <div class="a-zoom">🔍 点击放大</div>
+        ${dots}
       </div>
-      <div class="single-dots" id="singleDots">${dots}</div>
+      <div class="album-footer">
+        <div class="album-footer-meta">📅 ${m?m.date:''}<br>📍 ${m?m.venue:''}</div>
+        <div class="album-footer-cnt">${photos.length}张</div>
+      </div>
     </div>`;
-    window._singleCur=0;window._singleTotal=photos.length;
-  }
+  }).join('');
+  // 启动自动轮播
+  showEds.forEach(ed=>{
+    if((PHOTOS[ed]||[]).length>1){
+      autoT[ed]=setInterval(()=>{
+        setASlide(ed,(edCurSlide[ed]+1)%(PHOTOS[ed].length));
+      },2800);
+    }
+  });
 }
-
-let _edCur={};
-function setEdSlide(ed,idx){
-  _edCur[ed]=idx;
-  const box=document.getElementById('edbox-'+ed);
+function setASlide(ed,idx){
+  edCurSlide[ed]=idx;
+  const box=document.getElementById('asl-'+ed);
   if(!box)return;
-  box.querySelectorAll('.ed-slide').forEach((s,i)=>s.classList.toggle('active',i===idx));
-  const dotsEl=document.getElementById('eddots-'+ed);
-  if(dotsEl)dotsEl.querySelectorAll('.ed-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  box.querySelectorAll('.a-slide').forEach((s,i)=>s.classList.toggle('active',i===idx));
+  box.querySelectorAll('.a-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
 }
-function goEdSlide(ed,idx){setEdSlide(ed,idx);}
-function openLbFromEd(ed){
-  const cur=_edCur[ed]||0;
-  // find offset
-  let offset=0;
-  const eds=Object.keys(PHOTOS).map(Number).sort();
-  for(const e of eds){if(e===ed)break;offset+=(PHOTOS[e]||[]).length;}
-  openLb(offset+cur);
+function openLbFromAlbum(ed,startIdx){
+  const cur=edCurSlide[ed]||0;
+  openLb(startIdx+cur);
 }
 
-function navSingle(d){
-  window._singleCur=((window._singleCur||0)+d+window._singleTotal)%window._singleTotal;
-  document.getElementById('singleTrack').style.transform=`translateX(-${window._singleCur*100}%)`;
-  document.getElementById('singleDots').querySelectorAll('.s-dot')
-    .forEach((dot,i)=>dot.classList.toggle('active',i===window._singleCur));
+/* ════ 灯箱 ════ */
+function openLb(i){
+  lbIdx=i;updLb();
+  document.getElementById('lb').classList.add('open');
+  document.body.style.overflow='hidden';
 }
-function goSingle(i){
-  window._singleCur=i;
-  document.getElementById('singleTrack').style.transform=`translateX(-${i*100}%)`;
-  document.getElementById('singleDots').querySelectorAll('.s-dot')
-    .forEach((dot,j)=>dot.classList.toggle('active',j===i));
-}
-
-/* ── 灯箱 ── */
-function openLb(i){lbIdx=i;updLb();document.getElementById('lb').classList.add('open');document.body.style.overflow='hidden';}
 function closeLb(){document.getElementById('lb').classList.remove('open');document.body.style.overflow='';}
 function navLb(d){lbIdx=(lbIdx+d+lbItems.length)%lbItems.length;updLb();}
 function updLb(){
@@ -1002,12 +1386,14 @@ function updLb(){
   document.getElementById('lbCnt').textContent=`${lbIdx+1} / ${lbItems.length}`;
 }
 
-/* ── 弹窗 ── */
+/* ════ 规程弹窗 ════ */
 function openModal(){document.getElementById('modal').classList.add('active');}
 function closeModal(e){if(!e||e.target===document.getElementById('modal'))document.getElementById('modal').classList.remove('active');}
 
-/* ── 抽屉 ── */
+/* ════ 头像抽屉 ════ */
+let currentProfileKey='';
 function openProfile(key){
+  currentProfileKey=key;
   const m=MEMBERS[key],stats=calcStats()[key];
   const drawer=document.getElementById('drawer');
   drawer.style.setProperty('--dc',m.color);
@@ -1016,8 +1402,12 @@ function openProfile(key){
   document.getElementById('dSub').textContent=m.subtitle;
   document.getElementById('ds-wins').textContent=stats.wins;
   document.getElementById('ds-tw').textContent=stats.teamWins;
-  document.getElementById('ds-wr').textContent=stats.teamTotal?Math.round(stats.teamWins/stats.teamTotal*100)+'%':'—';
+  document.getElementById('ds-wr').textContent=stats.teamTotal?
+    Math.round(stats.teamWins/stats.teamTotal*100)+'%':'—';
   document.getElementById('ds-pts').textContent=stats.pts;
+  const maxPts=MATCHES.length*4;
+  const pct=maxPts?Math.round(stats.pts/maxPts*100):0;
+  document.getElementById('ds-pct').textContent=pct+'%';
   document.getElementById('dMatches').innerHTML=MATCHES.map((match,i)=>{
     const rank=match.ranks[key];
     const myTeam=match.teamA.includes(key)?match.teamA:match.teamB;
@@ -1045,14 +1435,248 @@ function closeProfile(){
   document.querySelectorAll('.avatar-card').forEach(c=>c.classList.remove('active'));
 }
 
+/* ════ PK对比 ════ */
+let pkKey1='',pkKey2='';
+function openPK(key){
+  closeProfile();
+  pkKey1=key;pkKey2='';
+  document.getElementById('pkAvatars').innerHTML=ORDER.map(k=>`
+    <div class="pk-av${k===key?' sel':''}" style="--pc:${MEMBERS[k].color}"
+      onclick="selectPKOpponent('${k}')">
+      <img src="${MEMBERS[k].img}" alt="${MEMBERS[k].name}">
+      <div class="pk-av-name">${MEMBERS[k].name}</div>
+    </div>`).join('');
+  document.getElementById('pkBody').classList.remove('show');
+  document.getElementById('pkOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function selectPKOpponent(key){
+  if(key===pkKey1)return;
+  pkKey2=key;
+  document.querySelectorAll('.pk-av').forEach((el,i)=>{
+    const k=ORDER[i];
+    el.classList.toggle('sel',k===pkKey1||k===pkKey2);
+    el.style.setProperty('--pc',MEMBERS[k].color);
+  });
+  renderPKBody();
+}
+function renderPKBody(){
+  const stats=calcStats();
+  const s1=stats[pkKey1],s2=stats[pkKey2];
+  const maxPts=MATCHES.length*4;
+  const rows=[
+    {label:'积分',v1:s1.pts,v2:s2.pts,s:'分'},
+    {label:'积分率',v1:Math.round(s1.pts/maxPts*100),v2:Math.round(s2.pts/maxPts*100),s:'%'},
+    {label:'冠军数',v1:s1.wins,v2:s2.wins,s:'次'},
+    {label:'团队胜场',v1:s1.teamWins,v2:s2.teamWins,s:'场'},
+    {label:'团队胜率',
+      v1:s1.teamTotal?Math.round(s1.teamWins/s1.teamTotal*100):0,
+      v2:s2.teamTotal?Math.round(s2.teamWins/s2.teamTotal*100):0,s:'%'},
+  ];
+  const body=document.getElementById('pkBody');
+  const c1=MEMBERS[pkKey1].color,c2=MEMBERS[pkKey2].color;
+
+  // 计算两人组队数据
+  const sorted=[pkKey1,pkKey2].sort((a,b)=>ORDER.indexOf(a)-ORDER.indexOf(b));
+  const teamKey=sorted.join('+');
+  let teamWins=0,teamTotal=0,teamEditions=[];
+  MATCHES.forEach(m=>{
+    const inSameTeam=(m.teamA.includes(pkKey1)&&m.teamA.includes(pkKey2))||
+                     (m.teamB.includes(pkKey1)&&m.teamB.includes(pkKey2));
+    if(inSameTeam){
+      teamTotal++;
+      const inA=m.teamA.includes(pkKey1);
+      const won=(inA&&m.winner==='A')||(!inA&&m.winner==='B');
+      if(won)teamWins++;
+      teamEditions.push({ed:m.edition,won});
+    }
+  });
+  const teamPct=teamTotal?Math.round(teamWins/teamTotal*100):null;
+
+  // 组队关系判断
+  let bondLabel='',bondStyle='',bondDesc='';
+  if(teamTotal===0){
+    bondLabel='🎲 从未组队';
+    bondStyle='background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.12)';
+    bondDesc='两人至今未曾同队出战，本届抽签若相遇将是历史首次搭档，充满未知！';
+  }else if(teamPct===100){
+    bondLabel='⚡ 全胜搭档';
+    bondStyle='background:rgba(57,255,20,.12);color:var(--glow);border:1px solid rgba(57,255,20,.3)';
+    bondDesc=`共同出战 ${teamTotal} 届，全胜 ${teamWins} 场，无一败绩！联手如虎添翼，是球场上的强力黄金羁绊。`;
+  }else if(teamTotal>=2&&teamPct>=67){
+    bondLabel='👑 黄金羁绊';
+    bondStyle='background:rgba(223,183,108,.12);color:var(--accent);border:1px solid rgba(223,183,108,.3)';
+    bondDesc=`共同出战 ${teamTotal} 届，胜率 ${teamPct}%（${teamWins}胜${teamTotal-teamWins}负）。搭档默契十足，对手见了都头疼。`;
+  }else if(teamPct===0){
+    bondLabel='💀 组队魔咒';
+    bondStyle='background:rgba(255,71,87,.1);color:var(--cwf);border:1px solid rgba(255,71,87,.25)';
+    bondDesc=`共同出战 ${teamTotal} 届，${teamTotal} 负 0 胜。每次组队必败，堪称球场最强诅咒组合！`;
+  }else if(teamTotal>=2&&teamPct<=33){
+    bondLabel='😬 最佳损友';
+    bondStyle='background:rgba(255,165,2,.1);color:var(--dj);border:1px solid rgba(255,165,2,.25)';
+    bondDesc=`共同出战 ${teamTotal} 届，胜率仅 ${teamPct}%（${teamWins}胜${teamTotal-teamWins}负）。单打独斗都是狠角色，一组队就互相拖累。`;
+  }else{
+    bondLabel='🤝 普通搭档';
+    bondStyle='background:rgba(30,144,255,.08);color:var(--ch);border:1px solid rgba(30,144,255,.2)';
+    bondDesc=`共同出战 ${teamTotal} 届，胜率 ${teamPct}%（${teamWins}胜${teamTotal-teamWins}负）。合作尚可，潜力待挖掘。`;
+  }
+  const edStr=teamEditions.length?teamEditions.map(e=>`届${e.ed}${e.won?'✓':'✗'}`).join(' '):'暂无记录';
+
+  body.innerHTML=`
+  <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0;margin-bottom:2px">
+    <div style="text-align:center;font-size:.82rem;font-weight:700;padding:5px 4px;color:${c1};
+      background:rgba(255,255,255,.03);border-radius:6px 0 0 0;border:1px solid rgba(255,255,255,.06);
+      border-bottom:none">${MEMBERS[pkKey1].name}</div>
+    <div style="background:rgba(0,0,0,.2);border-top:1px solid rgba(255,255,255,.06);min-width:52px"></div>
+    <div style="text-align:center;font-size:.82rem;font-weight:700;padding:5px 4px;color:${c2};
+      background:rgba(255,255,255,.03);border-radius:0 6px 0 0;border:1px solid rgba(255,255,255,.06);
+      border-bottom:none">${MEMBERS[pkKey2].name}</div>
+  </div>
+  <div class="pk-grid">
+    <div class="pk-col">
+      ${rows.map(r=>`<div class="pk-cell ${r.v1>r.v2?'win':r.v1<r.v2?'lose':'draw'}"
+        style="color:${r.v1>r.v2?'var(--glow)':r.v1<r.v2?'var(--muted)':c1}">${r.v1}${r.s}</div>`).join('')}
+    </div>
+    <div class="pk-col-mid">
+      ${rows.map(r=>`<div class="pk-cell-lbl">${r.label}</div>`).join('')}
+    </div>
+    <div class="pk-col">
+      ${rows.map(r=>`<div class="pk-cell ${r.v2>r.v1?'win':r.v2<r.v1?'lose':'draw'}"
+        style="color:${r.v2>r.v1?'var(--glow)':r.v2<r.v1?'var(--muted)':c2}">${r.v2}${r.s}</div>`).join('')}
+    </div>
+  </div>
+  <div class="pk-bond">
+    <div class="pk-bond-badge" style="${bondStyle}">${bondLabel}</div>
+    <div class="pk-bond-detail">${bondDesc}<br>
+      <span style="color:#404d46;font-size:.65rem">${edStr}</span>
+    </div>
+  </div>`;
+  body.classList.add('show');
+}
+function closePK(){
+  document.getElementById('pkOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ════ 走势图动画绘制 ════ */
+function animateChart(){
+  const keys=['cwf','ztq','ch','dj'];
+  keys.forEach((k,i)=>{
+    const line=document.getElementById('line-'+k);
+    const pts=document.getElementById('pts-'+k);
+    if(!line||!pts)return;
+    // 计算实际路径长度
+    const len=line.getTotalLength();
+    line.style.strokeDasharray=len;
+    line.style.strokeDashoffset=len;
+    setTimeout(()=>{
+      line.style.transition=`stroke-dashoffset 0.9s cubic-bezier(.4,0,.2,1)`;
+      line.style.strokeDashoffset=0;
+      // 数据点在线条绘完后出现
+      setTimeout(()=>{
+        pts.style.transition='opacity .4s ease';
+        pts.style.opacity=1;
+      },900);
+    }, i*180);
+  });
+}
+
+/* ════ 走势图高亮单人 ════ */
+let activeLines=new Set(['cwf','ztq','ch','dj']);
+function highlightLine(key){
+  // 如果当前已经是只高亮这一个人，则重置全部
+  if(activeLines.size===1&&activeLines.has(key)){
+    resetLines();return;
+  }
+  activeLines=new Set([key]);
+  ['cwf','ztq','ch','dj'].forEach(k=>{
+    const line=document.getElementById('line-'+k);
+    const pts=document.getElementById('pts-'+k);
+    const leg=document.querySelector(`.leg-clickable[data-key="${k}"]`);
+    if(k===key){
+      line&&line.classList.remove('line-dimmed');
+      pts&&(pts.style.opacity=1);
+      leg&&leg.classList.remove('dimmed');
+    }else{
+      line&&line.classList.add('line-dimmed');
+      pts&&(pts.style.opacity=.08);
+      leg&&leg.classList.add('dimmed');
+    }
+  });
+}
+function resetLines(){
+  activeLines=new Set(['cwf','ztq','ch','dj']);
+  ['cwf','ztq','ch','dj'].forEach(k=>{
+    document.getElementById('line-'+k)?.classList.remove('line-dimmed');
+    const pts=document.getElementById('pts-'+k);
+    if(pts)pts.style.opacity=1;
+    document.querySelector(`.leg-clickable[data-key="${k}"]`)?.classList.remove('dimmed');
+  });
+}
+
+/* ════ 全部赛程弹窗 ════ */
+function openAllMatches(){
+  const reversed=[...MATCHES].reverse();
+  document.getElementById('amList').innerHTML=reversed.map(m=>{
+    const sortedA=[...m.teamA].sort((a,b)=>ORDER.indexOf(a)-ORDER.indexOf(b));
+    const sortedB=[...m.teamB].sort((a,b)=>ORDER.indexOf(a)-ORDER.indexOf(b));
+    const aWon=m.winner==='A',bWon=m.winner==='B';
+    const labelA=sortedA.map(k=>`<span style="color:var(--${k})">${MEMBERS[k].name}</span>`).join(' & ');
+    const labelB=sortedB.map(k=>`<span style="color:var(--${k})">${MEMBERS[k].name}</span>`).join(' & ');
+    const byRank=ORDER.slice().sort((a,b)=>m.ranks[a]-m.ranks[b]);
+    const chips=byRank.map(k=>{
+      const r=m.ranks[k],inA=m.teamA.includes(k);
+      const isW=(inA&&aWon)||(!inA&&bWon);
+      return`<div class="am-rank-chip${isW?' winner':''}">
+        ${RANK_EMOJI[r]} <span style="color:var(--${k})">${MEMBERS[k].name}</span>${isW?' 👑':''}
+      </div>`;
+    }).join('');
+    // 颜色边框：最新届金色，旧届渐淡
+    const borderClr=m.edition===MATCHES.length?'var(--accent)':'rgba(255,255,255,.12)';
+    return`<div class="am-item" style="border-left-color:${borderClr}">
+      <div class="am-item-head">
+        <div class="am-edition">第${ED_CN[m.edition]}届大师赛</div>
+        <div class="am-date-badge">📅 ${m.date}</div>
+      </div>
+      <div class="am-meta-row">
+        <span>📍 ${m.venue}</span>
+        <span>👔 主办: ${m.host}</span>
+        <span>🍽️ 聚餐: ${m.dinner}</span>
+      </div>
+      <div class="am-vs-block">
+        <div class="am-team${aWon?' vs-winner':''}">${aWon?'🔥 ':''}${labelA}</div>
+        <div class="am-vs-badge">VS</div>
+        <div class="am-team${bWon?' vs-winner':''}">${bWon?'🔥 ':''}${labelB}</div>
+      </div>
+      <div class="am-ranks">${chips}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('allMatchesOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeAllMatches(){
+  document.getElementById('allMatchesOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ════ 手机底部导航 ════ */
+function navTo(id,btn){
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const el=document.getElementById(id);
+  if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-10,behavior:'smooth'});
+}
+
+/* ════ 键盘快捷键 ════ */
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){closeLb();closeProfile();closeModal();}
+  if(e.key==='Escape'){closeLb();closeProfile();closeModal();closeVMask();closePK();closeAllMatches();}
   if(document.getElementById('lb').classList.contains('open')){
     if(e.key==='ArrowLeft')navLb(-1);
     if(e.key==='ArrowRight')navLb(1);
   }
 });
 
+/* ════ INIT ════ */
 (function(){
   renderAvatars();
   renderTimeline();
@@ -1062,8 +1686,11 @@ document.addEventListener('keydown',e=>{
   const stats=calcStats();
   renderWR(stats);
   renderTeams();
-  renderGalleryTabs();
-  renderGallery('all');
+  renderVideos();
+  renderAlbumTabs();
+  renderAlbum('all');
+  // 走势图动画：页面加载后延迟触发
+  setTimeout(animateChart, 400);
 })();
 </script>
 </body>
